@@ -70,15 +70,16 @@
 
 - (NSColor *)colorFromName
 {
-    NSLog(@"### name: %@", self);
+  //  NSLog(@"### name: %@", self);
     if ([[self lowercaseString] isEqualToString:@"black"]) return [NSColor blackColor];
     if ([[self lowercaseString] isEqualToString:@"blue"]) return [NSColor blueColor];
     if ([[self lowercaseString] isEqualToString:@"green"]) return [NSColor greenColor];
-    if ([[self lowercaseString] isEqualToString:@"lime"]) return [NSColor colorFromHex:@"32CD32"];
+    if ([[self lowercaseString] isEqualToString:@"lime"]) return [NSColor limeColor];
     if ([[self lowercaseString] isEqualToString:@"orange"]) return [NSColor orangeColor];
+    if ([[self lowercaseString] isEqualToString:@"pink"]) return [NSColor pinkColor];
     if ([[self lowercaseString] isEqualToString:@"purple"]) return [NSColor purpleColor];
     if ([[self lowercaseString] isEqualToString:@"red"]) return [NSColor redColor];
-    if ([[self lowercaseString] isEqualToString:@"sky"]) return [NSColor colorFromHex:@"87CEEB"];
+    if ([[self lowercaseString] isEqualToString:@"sky"]) return [NSColor skyColor];
     if ([[self lowercaseString] isEqualToString:@"yellow"]) return [NSColor yellowColor];
 
     return nil;

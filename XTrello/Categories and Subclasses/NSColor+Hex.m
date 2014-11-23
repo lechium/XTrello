@@ -10,6 +10,21 @@
 
 @implementation NSColor (Hex)
 
++ (NSColor *)pinkColor
+{
+    return [NSColor colorFromHex:@"ff69b4"];
+}
+
++ (NSColor *)skyColor
+{
+    return [NSColor colorFromHex:@"87CEEB"];
+}
+
++ (NSColor *)limeColor
+{
+    return [NSColor colorFromHex:@"32CD32"];
+}
+
 + (NSColor *)lightBlueAlternate
 {
     return [NSColor colorFromHex:@"149CEA"];

@@ -112,15 +112,23 @@
     if (state == 0)
     {
         NSMutableArray *currentLabels = [[[self cardDict] valueForKey:@"labels"] mutableCopy];
-        NSDictionary *newLabel = @{@"color": realValue, @"name": menuItem.title};
+       // NSDictionary *newLabel = @{@"color": realValue, @"name": menuItem.title};
+        
+        NSDictionary *newLabel = [[XTTrelloWrapper sharedInstance] labelDictionaryFromColor:realValue inBoardNamed:self.boardName];
+        
+        NSLog(@"newLabel: %@", newLabel);
+        
         [currentLabels addObject:newLabel];
+        
+        
         
         [[XTTrelloWrapper sharedInstance] updateLocalCardLabels:self.cardDict withList:currentLabels inBoardNamed:self.boardName];
         
     } else {
         
         NSMutableArray *currentLabels = [[[self cardDict] valueForKey:@"labels"] mutableCopy];
-        NSDictionary *newLabel = @{@"color": realValue, @"name": menuItem.title};
+        NSDictionary *newLabel = [[XTTrelloWrapper sharedInstance] labelDictionaryFromColor:realValue inBoardNamed:self.boardName];
+        // NSDictionary *newLabel = @{@"color": realValue, @"name": menuItem.title};
         [currentLabels removeObject:newLabel];
        [[XTTrelloWrapper sharedInstance] updateLocalCardLabels:self.cardDict withList:currentLabels inBoardNamed:self.boardName];
     }
@@ -240,29 +248,37 @@
 - (NSMenu *)colorSubmenu
 {
     NSMenu *labelsSubmenu = [[NSMenu alloc] initWithTitle:@""];
-    NSDictionary *labelArray = [[[XTTrelloWrapper sharedInstance] boardNamed:self.boardName] valueForKey:@"labelNames"];
-    NSLog(@"### labelArray: %@", labelArray);
-    NSEnumerator *colorEnum = [labelArray keyEnumerator];
+ //   NSDictionary *labelArray = [[[XTTrelloWrapper sharedInstance] boardNamed:self.boardName] valueForKey:@"labelNames"];
+    NSArray *labelArray = [[[XTTrelloWrapper sharedInstance] boardNamed:self.boardName] valueForKey:@"labels"];
+    //  NSLog(@"### labelArray: %@", labelArray);
+    NSEnumerator *colorEnum = [labelArray objectEnumerator];
     id theColor = nil;
     int labelTag = 0;
     while(theColor = [colorEnum nextObject])
     {
+        NSString *currentColor = theColor[@"color"];
         NSMutableDictionary *attrs = [[NSMutableDictionary alloc] init];
-        NSColor *ourColor = [theColor colorFromName];
+        NSColor *ourColor = [currentColor colorFromName];
         if (ourColor != nil)
-            [attrs setObject:[theColor colorFromName] forKey:NSForegroundColorAttributeName];
+            [attrs setObject:[currentColor colorFromName] forKey:NSForegroundColorAttributeName];
         else
             NSLog(@"why is this color nil??: %@", theColor);
         [attrs setObject:[NSColor blackColor] forKey:NSStrokeColorAttributeName];
         [attrs setObject:[NSString stringWithFormat:@"%f", -3.0f] forKey:NSStrokeWidthAttributeName];
         [attrs setObject:[NSFont menuFontOfSize:14] forKey:NSFontAttributeName];
-        NSAttributedString *labelName = [[NSAttributedString alloc] initWithString:[labelArray objectForKey:theColor] attributes:attrs];
+        NSString *labelNamePlain = theColor[@"name"];
+        //  NSString *labelNamePlain = [labelArray objectForKey:theColor];
+        if (labelNamePlain.length == 0)
+        {
+            labelNamePlain = currentColor;
+        }
+        NSAttributedString *labelName = [[NSAttributedString alloc] initWithString:labelNamePlain attributes:attrs];
         XTMenuItem *currentLabel = [[XTMenuItem alloc] init];
         [currentLabel setAttributedTitle:labelName];
         [currentLabel setAction:@selector(setCardLabels:)];
-        [currentLabel setRealValue:theColor];
+        [currentLabel setRealValue:currentColor];
         [currentLabel setTag:labelTag];
-        if ([self containsLabel:theColor])
+        if ([self containsLabel:currentColor])
         {
             [currentLabel setState:1];
         }
@@ -365,7 +381,7 @@
 
 - (void)setLabels:(NSArray *)theLabels {
     
-    
+    LOG_SELF;
 }
 
 @end

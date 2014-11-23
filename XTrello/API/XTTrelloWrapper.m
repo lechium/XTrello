@@ -142,7 +142,7 @@
     NSMutableArray *newArray = [[NSMutableArray alloc] init];
     for (NSDictionary *labelDict in labelArray)
     {
-        [newArray addObject:labelDict[@"name"]];
+        [newArray addObject:labelDict[@"color"]];
     }
     return newArray;
 }
@@ -376,7 +376,17 @@
     NSInteger objectIndex = [[boardDict valueForKey:@"cards"] indexOfObject:theCard];
     NSMutableDictionary *newCard = [theCard mutableCopy];
     [newCard setObject:theList forKey:@"labels"];
-  //  NSLog(@"replacing: %@ with: %@", [cards objectAtIndex:objectIndex], newCard);
+    NSMutableArray *labelIds = [NSMutableArray new];
+    for(NSDictionary *labelDictionary in theList)
+    {
+        NSString *labelID = labelDictionary[@"id"];
+        [labelIds addObject:labelID];
+    }
+    if (labelIds.count > 0)
+    {
+        [newCard setObject:labelIds forKey:@"idLabels"];
+    }
+    // NSLog(@"replacing: %@ with: %@", [cards objectAtIndex:objectIndex], newCard);
     [cards replaceObjectAtIndex:objectIndex withObject:newCard];
     [boardDict setObject:cards forKey:@"cards"];
     [[self.trelloData objectForKey:@"boards"] setObject:boardDict forKey:boardName];
@@ -386,7 +396,7 @@
     
     NSArray *labelArray = [self usefulLabelArray:theList];
     NSString *cardID = theCard[@"id"];
-  //  NSLog(@"setting labels: %@ forCard: %@", labelArray, cardID);
+    NSLog(@"setting labels: %@ forCard: %@", labelArray, cardID);
    
     [self setLabels:labelArray forCardWithID:cardID];
     return trelloData;
@@ -778,7 +788,7 @@
     // NSString *labelsString = [theLabels componentsJoinedByString:@","];
     NSString *labelsString = [self colorStringFromLabelArray:theLabels];
     NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@/labels?key=%@&token=%@&value=%@", baseURL, theCard, apiKey, sessionToken, labelsString];
- //   NSLog(@"newURL: %@", newURL);
+    NSLog(@"newURL: %@", newURL);
 	[request setURL:[NSURL URLWithString:newURL]];
     [request setHTTPMethod:@"PUT"];
 	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
@@ -1085,6 +1095,16 @@
     [NSThread detachNewThreadSelector:@selector(fetchTrelloDataThreaded) toTarget:self withObject:nil];
 }
 
+- (NSDictionary *)labelDictionaryFromColor:(NSString *)colorName inBoardNamed:(NSString *)boardName
+{
+    NSLog(@"colorName: %@", colorName);
+    NSDictionary *currentBoard = [self boardNamed:boardName];
+    NSArray *labels = [currentBoard valueForKey:@"labels"];
+    NSDictionary *theLabel = [[labels filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(SELF.color == %@)", colorName]] lastObject];
+    return theLabel;
+    
+}
+
 - (void)fetchTrelloDataThreaded
 {
     @autoreleasepool {
@@ -1094,7 +1114,7 @@
         NSString *boards = [NSString stringWithFormat:@"%@/members/me/boards?key=%@&token=%@", baseURL, apiKey, sessionToken];
         NSString *me = [NSString stringWithFormat:@"%@/members/me?key=%@&token=%@", baseURL, apiKey, sessionToken];
        // NSString *myCards = [NSString stringWithFormat:@"%@/members/my/cards?key=%@&token=%@", baseURL, apiKey, sessionToken];
-        
+        //NSLog(@"boards: %@", boards);
         NSArray *jsonBoards = (NSArray *)[self dictionaryFromURLString:boards];
         NSDictionary *jsonMe = [self dictionaryFromURLString:me];
         
@@ -1127,6 +1147,17 @@
                 NSMutableDictionary *newBoard = [currentBoard mutableCopy];
                 NSString *boardID = [currentBoard objectForKey:@"id"];
                 NSString *name = [currentBoard objectForKey:@"name"];
+                NSString *currentLabelNamesURL = [NSString stringWithFormat:@"%@/boards/%@/labelNames?key=%@&token=%@", baseURL, boardID, apiKey, sessionToken];
+                
+                NSString *currentLabelsURL = [NSString stringWithFormat:@"%@/boards/%@/labels?key=%@&token=%@", baseURL, boardID, apiKey, sessionToken];
+                NSDictionary *labelsDict = [self dictionaryFromURLString:currentLabelsURL];
+                if (labelsDict != nil)
+                    [newBoard setObject:labelsDict forKey:@"labels"];
+                
+                NSDictionary *labelNamesDict = [self dictionaryFromURLString:currentLabelNamesURL];
+                if (labelNamesDict != nil)
+                    [newBoard setObject:labelNamesDict forKey:@"labelNames"];
+                
                 NSString *currentCardURL = [NSString stringWithFormat:@"%@/board/%@/cards?key=%@&token=%@", baseURL, boardID, apiKey, sessionToken];
                 NSArray *currentCards = (NSArray *)[self dictionaryFromURLString:currentCardURL];
                 if (currentCards != nil)

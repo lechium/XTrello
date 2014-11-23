@@ -38,7 +38,9 @@
     if ([theString isEqualToString:@"red"]) return [NSColor redColor];
     if ([theString isEqualToString:@"purple"]) return [NSColor purpleColor];
     if ([theString isEqualToString:@"blue"]) return [NSColor blueColor];
-    
+    if ([theString isEqualToString:@"pink"]) return [NSColor pinkColor];
+    if ([theString isEqualToString:@"sky"]) return [NSColor skyColor];
+    if ([theString isEqualToString:@"lime"]) return [NSColor limeColor];
     return nil;
 }
 

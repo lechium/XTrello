@@ -9,6 +9,9 @@
 #import <Cocoa/Cocoa.h>
 
 @interface NSColor (Hex)
++ (NSColor *)pinkColor;
++ (NSColor *)limeColor;
++ (NSColor *)skyColor;
 + (NSColor *)lightBlueAlternate;
 + (NSColor *)lightBlueColor;
 + (NSColor *)colorFromHex:(NSString *)s;

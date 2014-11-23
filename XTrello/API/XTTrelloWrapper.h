@@ -86,6 +86,7 @@ static NSString *const TFeatureLabel       =        @"feature";
 
 - (void)setLabels:(NSArray *)theLabels forCardNamed:(NSString *)cardName inBoardNamed:(NSString *)boardName;
 - (void)setLabels:(NSArray *)theLabels forCardWithID:(NSString *)theCard;
+- (NSDictionary *)labelDictionaryFromColor:(NSString *)colorName inBoardNamed:(NSString *)boardName;
 
 - (void)changeListName:(NSString *)theList toName:(NSString *)listName inBoardNamed:(NSString *)boardName;
 - (void)changeListWithID:(NSString *)listID toName:(NSString *)listName;
