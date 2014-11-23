@@ -1,0 +1,432 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		322B727F19744E5700555109 /* XTWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 322B727D19744E5700555109 /* XTWindowController.m */; };
+		322B728019744E5700555109 /* XTWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 322B727E19744E5700555109 /* XTWindowController.xib */; };
+		322B728E19744F8900555109 /* NSArray+trelloAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 322B728319744F8900555109 /* NSArray+trelloAdditions.m */; };
+		322B728F19744F8900555109 /* NSDictionary+trelloAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 322B728519744F8900555109 /* NSDictionary+trelloAdditions.m */; };
+		322B729019744F8900555109 /* NSString+trelloAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 322B728719744F8900555109 /* NSString+trelloAdditions.m */; };
+		322B729119744F8900555109 /* NSView+trelloAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 322B728919744F8900555109 /* NSView+trelloAdditions.m */; };
+		322B729219744F8900555109 /* XTMenuItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 322B728B19744F8900555109 /* XTMenuItem.m */; };
+		322B729319744F8900555109 /* XTTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 322B728D19744F8900555109 /* XTTableView.m */; };
+		322B729B19744F9300555109 /* XTTagView.m in Sources */ = {isa = PBXBuildFile; fileRef = 322B729619744F9300555109 /* XTTagView.m */; };
+		322B729C19744F9300555109 /* XTTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 322B729819744F9300555109 /* XTTagViewController.m */; };
+		322B729D19744F9300555109 /* XTTrelloCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 322B729A19744F9300555109 /* XTTrelloCardView.m */; };
+		322B72A119744FAB00555109 /* XTTrelloWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 322B72A019744FAB00555109 /* XTTrelloWrapper.m */; };
+		3264F4F619744CF700E9E1B6 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3264F4F519744CF700E9E1B6 /* AppKit.framework */; };
+		3264F4F819744CF700E9E1B6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3264F4F719744CF700E9E1B6 /* Foundation.framework */; };
+		3264F4FE19744CF700E9E1B6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3264F4FC19744CF700E9E1B6 /* InfoPlist.strings */; };
+		3264F50119744CF700E9E1B6 /* XTrello.m in Sources */ = {isa = PBXBuildFile; fileRef = 3264F50019744CF700E9E1B6 /* XTrello.m */; };
+		32871C05197831FF00277DEB /* NSDate+trelloAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 32871C04197831FF00277DEB /* NSDate+trelloAdditions.m */; };
+		32CFDAA519749C050008F69A /* XTModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 32CFDAA219749C050008F69A /* XTModel.m */; };
+		32CFDAA619749C050008F69A /* XTProjectSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 32CFDAA419749C050008F69A /* XTProjectSetting.m */; };
+		32CFDAA919749C560008F69A /* NSData+Split.m in Sources */ = {isa = PBXBuildFile; fileRef = 32CFDAA819749C560008F69A /* NSData+Split.m */; };
+		32FEA9101975D02B008B3661 /* XTrelloItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 32FEA90F1975D02B008B3661 /* XTrelloItem.m */; };
+		895236941A21539000719E09 /* NSColor+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = 895236931A21539000719E09 /* NSColor+Hex.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		322B727C19744E5700555109 /* XTWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTWindowController.h; sourceTree = "<group>"; };
+		322B727D19744E5700555109 /* XTWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTWindowController.m; sourceTree = "<group>"; };
+		322B727E19744E5700555109 /* XTWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = XTWindowController.xib; sourceTree = "<group>"; };
+		322B728219744F8900555109 /* NSArray+trelloAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+trelloAdditions.h"; sourceTree = "<group>"; };
+		322B728319744F8900555109 /* NSArray+trelloAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+trelloAdditions.m"; sourceTree = "<group>"; };
+		322B728419744F8900555109 /* NSDictionary+trelloAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+trelloAdditions.h"; sourceTree = "<group>"; };
+		322B728519744F8900555109 /* NSDictionary+trelloAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+trelloAdditions.m"; sourceTree = "<group>"; };
+		322B728619744F8900555109 /* NSString+trelloAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+trelloAdditions.h"; sourceTree = "<group>"; };
+		322B728719744F8900555109 /* NSString+trelloAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+trelloAdditions.m"; sourceTree = "<group>"; };
+		322B728819744F8900555109 /* NSView+trelloAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSView+trelloAdditions.h"; sourceTree = "<group>"; };
+		322B728919744F8900555109 /* NSView+trelloAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSView+trelloAdditions.m"; sourceTree = "<group>"; };
+		322B728A19744F8900555109 /* XTMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTMenuItem.h; sourceTree = "<group>"; };
+		322B728B19744F8900555109 /* XTMenuItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTMenuItem.m; sourceTree = "<group>"; };
+		322B728C19744F8900555109 /* XTTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTTableView.h; sourceTree = "<group>"; };
+		322B728D19744F8900555109 /* XTTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTTableView.m; sourceTree = "<group>"; };
+		322B729519744F9300555109 /* XTTagView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTTagView.h; sourceTree = "<group>"; };
+		322B729619744F9300555109 /* XTTagView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTTagView.m; sourceTree = "<group>"; };
+		322B729719744F9300555109 /* XTTagViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTTagViewController.h; sourceTree = "<group>"; };
+		322B729819744F9300555109 /* XTTagViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTTagViewController.m; sourceTree = "<group>"; };
+		322B729919744F9300555109 /* XTTrelloCardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTTrelloCardView.h; sourceTree = "<group>"; };
+		322B729A19744F9300555109 /* XTTrelloCardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTTrelloCardView.m; sourceTree = "<group>"; };
+		322B729F19744FAB00555109 /* XTTrelloWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTTrelloWrapper.h; sourceTree = "<group>"; };
+		322B72A019744FAB00555109 /* XTTrelloWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTTrelloWrapper.m; sourceTree = "<group>"; };
+		3264F4F219744CF700E9E1B6 /* XTrello.xcplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XTrello.xcplugin; sourceTree = BUILT_PRODUCTS_DIR; };
+		3264F4F519744CF700E9E1B6 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		3264F4F719744CF700E9E1B6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		3264F4FB19744CF700E9E1B6 /* XTrello-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "XTrello-Info.plist"; sourceTree = "<group>"; };
+		3264F4FD19744CF700E9E1B6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		3264F4FF19744CF700E9E1B6 /* XTrello.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XTrello.h; sourceTree = "<group>"; };
+		3264F50019744CF700E9E1B6 /* XTrello.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XTrello.m; sourceTree = "<group>"; };
+		3264F50219744CF700E9E1B6 /* XTrello-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XTrello-Prefix.pch"; sourceTree = "<group>"; };
+		32871C03197831FF00277DEB /* NSDate+trelloAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+trelloAdditions.h"; sourceTree = "<group>"; };
+		32871C04197831FF00277DEB /* NSDate+trelloAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+trelloAdditions.m"; sourceTree = "<group>"; };
+		32CFDAA119749C050008F69A /* XTModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTModel.h; sourceTree = "<group>"; };
+		32CFDAA219749C050008F69A /* XTModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTModel.m; sourceTree = "<group>"; };
+		32CFDAA319749C050008F69A /* XTProjectSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTProjectSetting.h; sourceTree = "<group>"; };
+		32CFDAA419749C050008F69A /* XTProjectSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTProjectSetting.m; sourceTree = "<group>"; };
+		32CFDAA719749C560008F69A /* NSData+Split.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+Split.h"; path = "../NSData+Split.h"; sourceTree = "<group>"; };
+		32CFDAA819749C560008F69A /* NSData+Split.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+Split.m"; path = "../NSData+Split.m"; sourceTree = "<group>"; };
+		32FEA90E1975D02B008B3661 /* XTrelloItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTrelloItem.h; sourceTree = "<group>"; };
+		32FEA90F1975D02B008B3661 /* XTrelloItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTrelloItem.m; sourceTree = "<group>"; };
+		895236921A21539000719E09 /* NSColor+Hex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSColor+Hex.h"; sourceTree = "<group>"; };
+		895236931A21539000719E09 /* NSColor+Hex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSColor+Hex.m"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3264F4EF19744CF700E9E1B6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3264F4F619744CF700E9E1B6 /* AppKit.framework in Frameworks */,
+				3264F4F819744CF700E9E1B6 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		322B728119744F8900555109 /* Categories and Subclasses */ = {
+			isa = PBXGroup;
+			children = (
+				895236921A21539000719E09 /* NSColor+Hex.h */,
+				895236931A21539000719E09 /* NSColor+Hex.m */,
+				32CFDAA719749C560008F69A /* NSData+Split.h */,
+				32CFDAA819749C560008F69A /* NSData+Split.m */,
+				322B728219744F8900555109 /* NSArray+trelloAdditions.h */,
+				322B728319744F8900555109 /* NSArray+trelloAdditions.m */,
+				322B728419744F8900555109 /* NSDictionary+trelloAdditions.h */,
+				322B728519744F8900555109 /* NSDictionary+trelloAdditions.m */,
+				322B728619744F8900555109 /* NSString+trelloAdditions.h */,
+				322B728719744F8900555109 /* NSString+trelloAdditions.m */,
+				322B728819744F8900555109 /* NSView+trelloAdditions.h */,
+				322B728919744F8900555109 /* NSView+trelloAdditions.m */,
+				322B728A19744F8900555109 /* XTMenuItem.h */,
+				322B728B19744F8900555109 /* XTMenuItem.m */,
+				322B728C19744F8900555109 /* XTTableView.h */,
+				322B728D19744F8900555109 /* XTTableView.m */,
+				32871C03197831FF00277DEB /* NSDate+trelloAdditions.h */,
+				32871C04197831FF00277DEB /* NSDate+trelloAdditions.m */,
+			);
+			path = "Categories and Subclasses";
+			sourceTree = "<group>";
+		};
+		322B729419744F9300555109 /* View Classes */ = {
+			isa = PBXGroup;
+			children = (
+				322B729519744F9300555109 /* XTTagView.h */,
+				322B729619744F9300555109 /* XTTagView.m */,
+				322B729719744F9300555109 /* XTTagViewController.h */,
+				322B729819744F9300555109 /* XTTagViewController.m */,
+				322B729919744F9300555109 /* XTTrelloCardView.h */,
+				322B729A19744F9300555109 /* XTTrelloCardView.m */,
+			);
+			name = "View Classes";
+			path = "XTrello/View Classes";
+			sourceTree = SOURCE_ROOT;
+		};
+		322B729E19744FAB00555109 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				322B729F19744FAB00555109 /* XTTrelloWrapper.h */,
+				322B72A019744FAB00555109 /* XTTrelloWrapper.m */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		3264F4E919744CF700E9E1B6 = {
+			isa = PBXGroup;
+			children = (
+				3264F4F919744CF700E9E1B6 /* XTrello */,
+				3264F4F419744CF700E9E1B6 /* Frameworks */,
+				3264F4F319744CF700E9E1B6 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3264F4F319744CF700E9E1B6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3264F4F219744CF700E9E1B6 /* XTrello.xcplugin */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3264F4F419744CF700E9E1B6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3264F4F519744CF700E9E1B6 /* AppKit.framework */,
+				3264F4F719744CF700E9E1B6 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3264F4F919744CF700E9E1B6 /* XTrello */ = {
+			isa = PBXGroup;
+			children = (
+				32979D111975991D0073F267 /* DataModel */,
+				322B729E19744FAB00555109 /* API */,
+				322B728119744F8900555109 /* Categories and Subclasses */,
+				322B729419744F9300555109 /* View Classes */,
+				3264F4FF19744CF700E9E1B6 /* XTrello.h */,
+				3264F50019744CF700E9E1B6 /* XTrello.m */,
+				32FEA90E1975D02B008B3661 /* XTrelloItem.h */,
+				32FEA90F1975D02B008B3661 /* XTrelloItem.m */,
+				322B727C19744E5700555109 /* XTWindowController.h */,
+				322B727D19744E5700555109 /* XTWindowController.m */,
+				322B727E19744E5700555109 /* XTWindowController.xib */,
+				3264F4FA19744CF700E9E1B6 /* Supporting Files */,
+			);
+			path = XTrello;
+			sourceTree = "<group>";
+		};
+		3264F4FA19744CF700E9E1B6 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				3264F4FB19744CF700E9E1B6 /* XTrello-Info.plist */,
+				3264F4FC19744CF700E9E1B6 /* InfoPlist.strings */,
+				3264F50219744CF700E9E1B6 /* XTrello-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		32979D111975991D0073F267 /* DataModel */ = {
+			isa = PBXGroup;
+			children = (
+				32CFDAA119749C050008F69A /* XTModel.h */,
+				32CFDAA219749C050008F69A /* XTModel.m */,
+				32CFDAA319749C050008F69A /* XTProjectSetting.h */,
+				32CFDAA419749C050008F69A /* XTProjectSetting.m */,
+			);
+			name = DataModel;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3264F4F119744CF700E9E1B6 /* XTrello */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3264F50519744CF700E9E1B6 /* Build configuration list for PBXNativeTarget "XTrello" */;
+			buildPhases = (
+				3264F4EE19744CF700E9E1B6 /* Sources */,
+				3264F4EF19744CF700E9E1B6 /* Frameworks */,
+				3264F4F019744CF700E9E1B6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = XTrello;
+			productName = XTrello;
+			productReference = 3264F4F219744CF700E9E1B6 /* XTrello.xcplugin */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3264F4EA19744CF700E9E1B6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "GlobalMed LLC";
+			};
+			buildConfigurationList = 3264F4ED19744CF700E9E1B6 /* Build configuration list for PBXProject "XTrello" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 3264F4E919744CF700E9E1B6;
+			productRefGroup = 3264F4F319744CF700E9E1B6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3264F4F119744CF700E9E1B6 /* XTrello */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3264F4F019744CF700E9E1B6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3264F4FE19744CF700E9E1B6 /* InfoPlist.strings in Resources */,
+				322B728019744E5700555109 /* XTWindowController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3264F4EE19744CF700E9E1B6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				322B729019744F8900555109 /* NSString+trelloAdditions.m in Sources */,
+				32FEA9101975D02B008B3661 /* XTrelloItem.m in Sources */,
+				322B728F19744F8900555109 /* NSDictionary+trelloAdditions.m in Sources */,
+				3264F50119744CF700E9E1B6 /* XTrello.m in Sources */,
+				895236941A21539000719E09 /* NSColor+Hex.m in Sources */,
+				322B72A119744FAB00555109 /* XTTrelloWrapper.m in Sources */,
+				322B728E19744F8900555109 /* NSArray+trelloAdditions.m in Sources */,
+				322B729B19744F9300555109 /* XTTagView.m in Sources */,
+				322B729C19744F9300555109 /* XTTagViewController.m in Sources */,
+				322B727F19744E5700555109 /* XTWindowController.m in Sources */,
+				32CFDAA619749C050008F69A /* XTProjectSetting.m in Sources */,
+				32871C05197831FF00277DEB /* NSDate+trelloAdditions.m in Sources */,
+				32CFDAA519749C050008F69A /* XTModel.m in Sources */,
+				32CFDAA919749C560008F69A /* NSData+Split.m in Sources */,
+				322B729219744F8900555109 /* XTMenuItem.m in Sources */,
+				322B729119744F8900555109 /* NSView+trelloAdditions.m in Sources */,
+				322B729319744F8900555109 /* XTTableView.m in Sources */,
+				322B729D19744F9300555109 /* XTTrelloCardView.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		3264F4FC19744CF700E9E1B6 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3264F4FD19744CF700E9E1B6 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		3264F50319744CF700E9E1B6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3264F50419744CF700E9E1B6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3264F50619744CF700E9E1B6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: Kevin Bradley (7PKGTC4Q8M)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Kevin Bradley (7PKGTC4Q8M)";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEPLOYMENT_LOCATION = YES;
+				DSTROOT = "$(HOME)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "XTrello/XTrello-Prefix.pch";
+				INFOPLIST_FILE = "XTrello/XTrello-Info.plist";
+				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "BF107E5A-C81F-4AD3-BE42-C1E46A34224C";
+				WRAPPER_EXTENSION = xcplugin;
+			};
+			name = Debug;
+		};
+		3264F50719744CF700E9E1B6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DEPLOYMENT_LOCATION = YES;
+				DSTROOT = "$(HOME)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "XTrello/XTrello-Prefix.pch";
+				INFOPLIST_FILE = "XTrello/XTrello-Info.plist";
+				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = xcplugin;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3264F4ED19744CF700E9E1B6 /* Build configuration list for PBXProject "XTrello" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3264F50319744CF700E9E1B6 /* Debug */,
+				3264F50419744CF700E9E1B6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3264F50519744CF700E9E1B6 /* Build configuration list for PBXNativeTarget "XTrello" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3264F50619744CF700E9E1B6 /* Debug */,
+				3264F50719744CF700E9E1B6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3264F4EA19744CF700E9E1B6 /* Project object */;
+}

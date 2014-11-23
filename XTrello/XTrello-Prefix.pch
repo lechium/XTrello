@@ -1,0 +1,29 @@
+//
+//  Prefix header
+//
+//  The contents of this file are implicitly included at the beginning of every source file.
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#import "NSString+trelloAdditions.h"
+#import "NSArray+trelloAdditions.h"
+#import "NSDictionary+trelloAdditions.h"
+#import "XTTrelloWrapper.h"
+#import "NSView+trelloAdditions.h"
+#import "NSString+trelloAdditions.h"
+#import "NSDictionary+trelloAdditions.h"
+#import "XTTrelloCardView.h"
+#import "XTMenuItem.h"
+#import "XTModel.h"
+#import "NSColor+Hex.h"
+
+static NSString* const kXTrelloAuthToken = @"trelloAuthToken";
+static NSString* const kXTrelloAPIKey = @"trelloAPIKey";
+static NSString* const kXTrelloRefreshRate = @"trelloRefreshRate";
+static NSString* const kXTrelloPreferencesChanged = @"trelloPrefsChanged";
+static NSString* const kXTrelloFloatingWindow = @"trelloFloatingWindow";
+
+#define LOG_SELF  NSLog(@"%@ %@", self, NSStringFromSelector(_cmd))
+#define UD [NSUserDefaults standardUserDefaults]
+#endif
