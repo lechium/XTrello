@@ -787,13 +787,12 @@
     }
 }
 
-//["54713df774d650d567621195","54713df774d650d567621194","54713df774d650d567621196"]
 
 - (void)deleteLabelID:(NSString *)labelID forCardWithID:(NSString *)theCard
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@/idLabels/%@?key=%@&token=%@", baseURL, theCard, labelID,apiKey, sessionToken];
-     NSLog(@"newURL: %@", newURL);
+   //  NSLog(@"newURL: %@", newURL);
     [request setURL:[NSURL URLWithString:newURL]];
     [request setHTTPMethod:@"DELETE"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
@@ -806,7 +805,7 @@
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@/idLabels?key=%@&token=%@&value=%@", baseURL, theCard, apiKey, sessionToken, labelID];
-    NSLog(@"newURL: %@", newURL);
+  //  NSLog(@"newURL: %@", newURL);
     [request setURL:[NSURL URLWithString:newURL]];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
@@ -815,13 +814,14 @@
     
 }
 
+//obsolete method, dont use it! wont support new colors
 - (void)setLabels:(NSArray *)theLabels forCardWithID:(NSString *)theCard
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     // NSString *labelsString = [theLabels componentsJoinedByString:@","];
     NSString *labelsString = [self colorStringFromLabelArray:theLabels];
     NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@/labels?key=%@&token=%@&value=%@", baseURL, theCard, apiKey, sessionToken, labelsString];
-    NSLog(@"newURL: %@", newURL);
+    //NSLog(@"newURL: %@", newURL);
 	[request setURL:[NSURL URLWithString:newURL]];
     [request setHTTPMethod:@"PUT"];
 	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
