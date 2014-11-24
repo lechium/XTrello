@@ -152,8 +152,10 @@ static XTrello *XTrelloSharedPlugin;
         
         [trelloInst fetchTrelloData];
        
-   
-        
+        //54713df774d650d567621195,54713df774d650d567621194,54713df774d650d567621196
+       // [trelloInst addLabelID:@"54713df774d650d567621195" forCardWithID:@"5471676662c860154400f09f"];
+        //[trelloInst deleteLabelID:@"54713df774d650d567621195" forCardWithID:@"5471676662c860154400f09f"];
+        //NSLog(@"### are we sciencing??");
         static dispatch_once_t onceToken2;
         dispatch_once(&onceToken2, ^{
             

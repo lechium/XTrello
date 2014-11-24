@@ -109,7 +109,7 @@
     XTMenuItem *menuItem = (XTMenuItem *)sender;
     NSString *realValue = [menuItem realValue];
     NSInteger state = menuItem.state;
-    if (state == 0)
+    if (state == 0) //it was off and that particular label didnt exist yet
     {
         NSMutableArray *currentLabels = [[[self cardDict] valueForKey:@"labels"] mutableCopy];
        // NSDictionary *newLabel = @{@"color": realValue, @"name": menuItem.title};
@@ -123,14 +123,17 @@
         
         
         [[XTTrelloWrapper sharedInstance] updateLocalCardLabels:self.cardDict withList:currentLabels inBoardNamed:self.boardName];
+        [[XTTrelloWrapper sharedInstance] addLabelID:newLabel[@"id"] forCardWithID:self.cardDict[@"id"]];
         
-    } else {
+        
+    } else { //delete the label!
         
         NSMutableArray *currentLabels = [[[self cardDict] valueForKey:@"labels"] mutableCopy];
         NSDictionary *newLabel = [[XTTrelloWrapper sharedInstance] labelDictionaryFromColor:realValue inBoardNamed:self.boardName];
         // NSDictionary *newLabel = @{@"color": realValue, @"name": menuItem.title};
         [currentLabels removeObject:newLabel];
        [[XTTrelloWrapper sharedInstance] updateLocalCardLabels:self.cardDict withList:currentLabels inBoardNamed:self.boardName];
+        [[XTTrelloWrapper sharedInstance] deleteLabelID:newLabel[@"id"] forCardWithID:self.cardDict[@"id"]];
     }
     
     if (state == 0) state = 1;

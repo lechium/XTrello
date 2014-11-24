@@ -100,7 +100,7 @@
             returnObject = newJSONObject;
         }
         
-    } else { //otherwise it SHOULD be an array...
+    } else if ([theString respondsToSelector:@selector(count)]){ //otherwise it SHOULD be an array...
         
         returnObject = [self nullReplacedArray:newJSONObject];
     }
@@ -392,13 +392,18 @@
     [[self.trelloData objectForKey:@"boards"] setObject:boardDict forKey:boardName];
     [self.trelloData writeToFile:[XTModel boardsDataStoreFile] atomically:TRUE];
     
-    //now update on trello side!!
+    //stuff below is deprecated, the labels are updated directly in XTTrelloCardView
+   /*
+    
+
     
     NSArray *labelArray = [self usefulLabelArray:theList];
     NSString *cardID = theCard[@"id"];
     NSLog(@"setting labels: %@ forCard: %@", labelArray, cardID);
    
     [self setLabels:labelArray forCardWithID:cardID];
+    */
+    
     return trelloData;
 }
 
@@ -782,6 +787,34 @@
     }
 }
 
+//["54713df774d650d567621195","54713df774d650d567621194","54713df774d650d567621196"]
+
+- (void)deleteLabelID:(NSString *)labelID forCardWithID:(NSString *)theCard
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@/idLabels/%@?key=%@&token=%@", baseURL, theCard, labelID,apiKey, sessionToken];
+     NSLog(@"newURL: %@", newURL);
+    [request setURL:[NSURL URLWithString:newURL]];
+    [request setHTTPMethod:@"DELETE"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    
+    [self performSynchronousConnectionFromURLRequest:request];
+    
+}
+
+- (void)addLabelID:(NSString *)labelID forCardWithID:(NSString *)theCard
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@/idLabels?key=%@&token=%@&value=%@", baseURL, theCard, apiKey, sessionToken, labelID];
+    NSLog(@"newURL: %@", newURL);
+    [request setURL:[NSURL URLWithString:newURL]];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    
+    [self performSynchronousConnectionFromURLRequest:request];
+    
+}
+
 - (void)setLabels:(NSArray *)theLabels forCardWithID:(NSString *)theCard
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
@@ -997,9 +1030,13 @@
     NSHTTPURLResponse *theResponse = nil;
     NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:&theResponse error:nil];
     NSString *datString = [[NSString alloc] initWithData:returnData  encoding:NSUTF8StringEncoding];
+  //  NSLog(@"response: %@", datString);
     NSDictionary *responseDict = [self dictionaryFromJSONStringResponse:datString];
+    if (responseDict == nil){
+        responseDict = datString;
+    }
     NSDictionary *returnDict = @{@"response": responseDict, @"statusCode": [NSString stringWithFormat:@"%li", (long)[theResponse statusCode]]};
-    
+    NSLog(@"returnDict: %@", returnDict);
     if ([theResponse statusCode] != 200)
     {
         NSLog(@"response: %@ withStatus Code: %li", datString, (long)[theResponse statusCode]);
