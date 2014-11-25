@@ -192,6 +192,11 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
 //}
 
 
+- (NSString *)firstListName
+{
+    NSArray *lists = [[[XTTrelloWrapper sharedInstance] boardNamed:currentBoard] objectForKey:@"lists"];
+    return [[lists objectAtIndex:0] valueForKey:@"name"];
+}
 
 - (void)setBoardArrayContent:(NSArray *)boardArray
 {
@@ -589,7 +594,7 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
     NSString *newDesc = [NSString stringWithFormat:@"%@\nbranch:%@\nline:%li\n%@", [currentSourceFile.absolutePath tildePath], currentBranch, self.selectedLineNumber, self.focalText];
  
     
-    [[XTTrelloWrapper sharedInstance] addCardToBoard:theBoard inList:@"To Do" withName:fileDesc withDescription:newDesc];
+    [[XTTrelloWrapper sharedInstance] addCardToBoard:theBoard inList:[self firstListName] withName:fileDesc withDescription:newDesc];
     [self populateCardsFromListNamed:currentList inBoard:currentBoard];
     if(!self.window.isVisible)
     {
