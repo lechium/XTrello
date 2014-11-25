@@ -35,6 +35,7 @@
     IBOutlet NSArrayController *boardListController;
     IBOutlet NSArrayController *boardArrayController;
     IBOutlet NSWindow *prefWindow;
+    IBOutlet NSTextField *apiKeyField;
 }
 @property (nonatomic, assign) IBOutlet NSWindow *windowTwo;
 @property (nonatomic, assign) id delegate;
@@ -43,6 +44,7 @@
 @property (nonatomic, retain) NSTextView *currentTextView;
 @property (nonatomic, assign) long selectedLineNumber;
 @property (nonatomic, retain) NSString *focalText;
+@property (readwrite, assign) BOOL boardsLoaded;
 - (void)delayedResignFirstResponder;
 - (NSString *)currentProjectName;
 - (void)newCardFromMenu:(id)sender;

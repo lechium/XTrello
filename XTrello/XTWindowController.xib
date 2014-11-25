@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5053" systemVersion="12F45" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="13F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment defaultVersion="1080" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5053"/>
-        <plugIn identifier="com.apple.WebKitIBPlugin" version="5053"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+        <plugIn identifier="com.apple.WebKitIBPlugin" version="6250"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="XTWindowController">
             <connections>
+                <outlet property="apiKey" destination="tGx-Py-OeT" id="peA-DW-cml"/>
+                <outlet property="apiKeyField" destination="tGx-Py-OeT" id="dgP-6x-5eV"/>
                 <outlet property="boardArrayController" destination="okJ-4U-H1r" id="C5L-1u-dWv"/>
                 <outlet property="boardListController" destination="8Uf-Vz-xQN" id="8Dt-hJ-pEd"/>
                 <outlet property="boardPopup" destination="337-dM-Jtw" id="8c1-CK-Dbv"/>
@@ -20,7 +22,7 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="NeXTRAOrdinary" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="sO1-dp-YT4">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
@@ -38,7 +40,6 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="none" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="100" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" id="geN-la-3v2" customClass="XTTableView">
-                                    <rect key="frame" x="0.0" y="0.0" width="310" height="487"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" red="0.99444444440000002" green="0.98888888890000004" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -90,7 +91,6 @@
                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </clipView>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="r2m-VB-Yop">
-                            <rect key="frame" x="1" y="-15" width="0.0" height="16"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="jmj-UG-d9h">
@@ -103,7 +103,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <popUpButtonCell key="cell" type="recessed" bezelStyle="recessed" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="J0j-XN-yEX">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                            <font key="font" size="12" name="LucidaGrande-Bold"/>
+                            <font key="font" metaFont="systemBold" size="12"/>
                             <menu key="menu" title="OtherViews" id="NxF-QS-e6q">
                                 <items>
                                     <menuItem title="Item 1" id="5rO-Ck-geB"/>
@@ -123,7 +123,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <popUpButtonCell key="cell" type="recessed" title="Item 1" bezelStyle="recessed" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="dPj-Bc-whk" id="sIB-ad-785">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                            <font key="font" size="12" name="LucidaGrande-Bold"/>
+                            <font key="font" metaFont="systemBold" size="12"/>
                             <menu key="menu" title="OtherViews" id="S1k-eA-CzS">
                                 <items>
                                     <menuItem title="Item 1" state="on" id="dPj-Bc-whk"/>
@@ -143,7 +143,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="bevel" title="+" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="xS5-Tq-JZa">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" size="18" name="LucidaGrande-Bold"/>
+                            <font key="font" metaFont="systemBold" size="18"/>
                         </buttonCell>
                         <connections>
                             <action selector="addNewCard:" target="-2" id="Occ-tu-I6t"/>
@@ -254,8 +254,9 @@
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="FDl-9p-JsC" name="value" keyPath="values.trelloAPIKey" id="6D9-Ak-9da">
+                            <binding destination="FDl-9p-JsC" name="value" keyPath="values.trelloAPIKey" id="thq-22-7iC">
                                 <dictionary key="options">
+                                    <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                     <bool key="NSValidatesImmediately" value="YES"/>
                                 </dictionary>
                             </binding>

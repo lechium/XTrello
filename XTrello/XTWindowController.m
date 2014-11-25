@@ -63,10 +63,16 @@
 
 - (void)webView:(WebView *)webView decidePolicyForNewWindowAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request newFrameName:(NSString *)frameName decisionListener:(id<WebPolicyDecisionListener>)listener
 {
-   // LOG_SELF;
-   // NSLog(@"actionInfo: %@ request: %@", actionInformation, request);
+    LOG_SELF;
+    NSLog(@"actionInfo: %@ request: %@", actionInformation, request);
     [listener use];
     [[NSWorkspace sharedWorkspace] openURL:request.URL];
+    /*
+     NSHTTPURLResponse *theResponse = nil;
+     NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:&theResponse error:nil];
+     NSString *datString = [[NSString alloc] initWithData:returnData  encoding:NSUTF8StringEncoding];
+     
+     */
 }
 
 /*
@@ -79,7 +85,7 @@
  WebActionNavigationTypeKey = 5; //other... absolutely USELESS.
  WebActionOriginalURLKey = "https://github.com/bnickel/KIFBackgrounding";
  } request: <NSMutableURLRequest: 0x7fc6286e6240> { URL: https://github.com/bnickel/KIFBackgrounding }
-
+*/
 
 
 - (void)webView:(WebView *)aWebView
@@ -88,12 +94,29 @@ decidePolicyForNavigationAction:(NSDictionary *)actionInformation
           frame:(WebFrame *)frame
 decisionListener:(id < WebPolicyDecisionListener >)listener
 {
-    LOG_SELF;
-    NSLog(@"actionInfo: %@ request: %@", actionInformation, request);
+    LOG_SELF;// WebNavigationTypeFormSubmitted
+    WebNavigationType typeKey = [actionInformation[@"WebActionNavigationTypeKey"] intValue];
+    if (typeKey == WebNavigationTypeFormSubmitted)
+    {
+        NSHTTPURLResponse *theResponse = nil;
+        NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:&theResponse error:nil];
+        NSString *datString = [[NSString alloc] initWithData:returnData  encoding:NSUTF8StringEncoding];
+      //  NSLog(@"datString: %@", datString);
+        NSError *error = nil;
+        NSXMLDocument *document = [[NSXMLDocument alloc] initWithXMLString:datString options:NSXMLDocumentTidyHTML error:&error];
+        NSXMLElement *root = [document rootElement];
+        NSString *token=[[[[root objectsForXQuery:@"//pre" error:&error]objectAtIndex:0] stringValue] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        if (token.length != 0)
+        {
+            [UD setObject:token forKey:kXTrelloAuthToken];
+        }
+        // NSLog(@"token: -%@-", token);
+    }
+  //  NSLog(@"actionInfo: %@ request: %@", actionInformation, request);
     [listener use];
 }
  
-*/
+
 //- (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request
 //{
 //    //tried to make it open in default browser here, but URL is nul... so dumb.
@@ -461,12 +484,18 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
     NSString *apiKey = [UD objectForKey:kXTrelloAPIKey];
     if (apiKey != nil) {
         NSString *generateString = [NSString stringWithFormat:@"https://trello.com/1/authorize?key=%@&name=XTrello&expiration=never&response_type=token&scope=read,write", apiKey];
-        [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:generateString]];
+      
+        NSURLRequest *theRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:generateString]];
+        [[webView mainFrame] loadRequest:theRequest];
+        [windowTwo makeKeyAndOrderFront:nil];
+        [[self delegate] addItemForWindowTag:2];
+        //  [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:generateString]];
     } else {
         NSLog(@"MISSING API KEY!");
         NSAlert *missingAPIKeyAlert = [NSAlert alertWithMessageText:@"Missing Trello API Key" defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:@"You are missing a Trello API key, this needs to be set before you can generate a new session token!"];
         [missingAPIKeyAlert runModal];
         [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://trello.com/1/appKey/generate"]];
+        [apiKeyField becomeFirstResponder];
     }
 }
 

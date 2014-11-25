@@ -279,6 +279,15 @@ static XTrello *XTrelloSharedPlugin;
 
 - (void)trelloDataUpdated:(NSDictionary *)theData
 {
+    if (self.windowController.boardsLoaded == false)
+    {
+        NSLog(@"boards are not loaded!");
+        NSDictionary *boards = [theData objectForKey:@"boards"];
+        NSArray *boardArray = [self boardDictionaryToArray:boards];
+        [self.windowController setBoardArrayContent:boardArray];
+        [self.windowController selectBoardNamed:[[boardArray objectAtIndex:0] valueForKey:@"name"]];
+        self.windowController.boardsLoaded = TRUE;
+    }
     trelloReady = TRUE;
     theData = trelloData;
     [self.windowController dataReloaded];
@@ -309,6 +318,7 @@ static XTrello *XTrelloSharedPlugin;
          wc.delegate = self;
      }
     [self.windowController setBoardArrayContent:boardArray];
+    self.windowController.boardsLoaded = TRUE;
     //[self.windowController.boardArrayController setContent:boardArray];
     [self.windowController selectBoardNamed:[[boardArray objectAtIndex:0] valueForKey:@"name"]];
     
@@ -346,7 +356,10 @@ static XTrello *XTrelloSharedPlugin;
 - (void)refresh:(id)sender
 {
     LOG_SELF;
-    [[XTTrelloWrapper sharedInstance] reloadTrelloData];
+    if ([[UD valueForKey:kXTrelloAuthToken] length] > 0 && [[UD valueForKey:kXTrelloAPIKey] length] > 0 )
+        [[XTTrelloWrapper sharedInstance] reloadTrelloData];
+    else
+        NSLog(@"no auth token");
 }
 
 - (void)setupRefreshTimer
@@ -424,6 +437,14 @@ static XTrello *XTrelloSharedPlugin;
             NSArray *boardArray = [self boardDictionaryToArray:boards];
             [self.windowController setBoardArrayContent:boardArray];
         }
+        
+        if ([UD valueForKey:kXTrelloAuthToken] == nil || [UD valueForKey:kXTrelloAPIKey] == nil)
+        {
+            NSLog(@"no auth token! show pref windows!");
+            [self.windowController showPreferences:nil];
+            return;
+        }
+        
         NSString *projectName = [XTModel currentProjectName];
         NSLog(@"projectname: %@", projectName);
         [self.windowController.window makeKeyAndOrderFront:nil];

@@ -1145,13 +1145,14 @@
 - (void)fetchTrelloDataThreaded
 {
     @autoreleasepool {
+        LOG_SELF;
         //NSArray *commentTest = [self cardCommentsFromCardID:@"53be23b72a746fdf45de45b3"];
         //NSLog(@"comments test: %@", commentTest);
         NSMutableDictionary *trelloDict = [[NSMutableDictionary alloc] init];
         NSString *boards = [NSString stringWithFormat:@"%@/members/me/boards?key=%@&token=%@", baseURL, apiKey, sessionToken];
         NSString *me = [NSString stringWithFormat:@"%@/members/me?key=%@&token=%@", baseURL, apiKey, sessionToken];
        // NSString *myCards = [NSString stringWithFormat:@"%@/members/my/cards?key=%@&token=%@", baseURL, apiKey, sessionToken];
-        //NSLog(@"boards: %@", boards);
+        NSLog(@"boards: %@", boards);
         NSArray *jsonBoards = (NSArray *)[self dictionaryFromURLString:boards];
         NSDictionary *jsonMe = [self dictionaryFromURLString:me];
         
@@ -1264,6 +1265,17 @@
      startDate = [NSDate date];
     self.reloading = TRUE;
     self.dataReady = FALSE;
+    if (self.apiKey == nil)
+        self.apiKey = [UD valueForKey:kXTrelloAPIKey];
+    if (self.sessionToken == nil)
+        self.sessionToken = [UD valueForKey:kXTrelloAuthToken];
+    
+    if (self.sessionToken == nil || self.apiKey == nil)
+    {
+        NSLog(@"either session token or api key is nil! bail!");
+        return;
+    }
+    
     [NSThread detachNewThreadSelector:@selector(fetchTrelloDataThreaded) toTarget:self withObject:nil];
 }
 
