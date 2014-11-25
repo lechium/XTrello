@@ -479,6 +479,12 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
     [XTWindowController openItem:newItem];
 }
 
+/**
+ 
+ generates the session token we use to access trello data.
+ 
+ */
+
 - (IBAction)generateToken:(id)sender
 {
     NSString *apiKey = [UD objectForKey:kXTrelloAPIKey];
