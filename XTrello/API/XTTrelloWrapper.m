@@ -990,7 +990,7 @@
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     NSString *newURL = [NSString stringWithFormat:@"%@/boards?name=%@&idOrganization=%@&key=%@&token=%@&prefs_permissionLevel=org", baseURL, boardName,orgName, apiKey, sessionToken];
-    //NSLog(@"newURL: %@", newURL);
+    NSLog(@"newURL: %@", newURL);
 	[request setURL:[NSURL URLWithString:newURL]];
     [request setHTTPMethod:@"POST"];
 	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
@@ -1279,14 +1279,30 @@
     [NSThread detachNewThreadSelector:@selector(fetchTrelloDataThreaded) toTarget:self withObject:nil];
 }
 
+- (NSString *)firstOrganizationName
+{
+    NSArray *orgs = [[trelloData objectForKey:@"me"] objectForKey:@"organizations"];
+    if (orgs != nil)
+    {
+        NSDictionary *firstOrg = [[[trelloData objectForKey:@"me"] objectForKey:@"organizations"] firstObject];
+        NSString *orgName = firstOrg[@"name"];
+        return orgName;
+    }
+    return nil;
+}
 
 /*
  {"id":"ORGID","name":"XTrelloTest","desc":"","descData":null,"closed":false,"idOrganization":"ORGID","pinned":true,"url":"https://trello.com/b/peenlU3U/xtrellotest","shortUrl":"https://trello.com/b/peenlU3U","prefs":{"permissionLevel":"org","voting":"disabled","comments":"members","invitations":"members","selfJoin":false,"cardCovers":true,"cardAging":"regular","calendarFeedEnabled":false,"background":"blue","backgroundColor":"#23719F","backgroundImage":null,"backgroundImageScaled":null,"backgroundTile":false,"backgroundBrightness":"unknown","canBePublic":true,"canBeOrg":true,"canBePrivate":true,"canInvite":true},"labelNames":{"red":"","orange":"","yellow":"","green":"","blue":"","purple":""}} withStatus Code: 200
  */
 
-- (void)createNewTemplateBoardWithName:(NSString *)boardName
+- (void)createNewTemplateBoardWithName:(NSString *)boardName inOrganization:(NSString *)orgName
 {
-    NSDictionary *newBoard = [self createBoardWithName:boardName inOrganization:@""];
+    if ([self boardNamed:boardName] != nil)
+    {
+        NSLog(@"board already exists!!");
+        return;
+    }
+    NSDictionary *newBoard = [self createBoardWithName:boardName inOrganization:orgName];
     NSDictionary *convertedDict = [self dictionaryFromJSONStringResponse:newBoard[@"response"]];
     NSString *boardID = convertedDict[@"id"];
   
@@ -1314,6 +1330,7 @@
     [self createCardWithName:[self initialNoteForType:XTBacklogType] toListWithID:backlogID];
     
     [self setDefaultLabelsForBoardID:boardID];
+ //   [self reloadTrelloData];
 }
 
 @end

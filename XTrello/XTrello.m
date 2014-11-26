@@ -136,9 +136,9 @@ static XTrello *XTrelloSharedPlugin;
             [trelloItem setKeyEquivalentModifierMask:NSControlKeyMask];
             [trelloItem setTarget:self.windowController];
             [trelloMenu addItem:trelloItem];
-        //    NSMenuItem *prefItem = [[NSMenuItem alloc] initWithTitle:@"Trello Preferences..." action:@selector(showPreferences:) keyEquivalent:@""];
-          //  [prefItem setTarget:self.windowController];
-            //[trelloMenu addItem:prefItem];
+            NSMenuItem *prefItem = [[NSMenuItem alloc] initWithTitle:@"Create Board for Current Project..." action:@selector(createBoardForCurrentProject) keyEquivalent:@""];
+            [prefItem setTarget:self];
+            [trelloMenu addItem:prefItem];
             [trelloMenuItem setSubmenu:trelloMenu];
             [[menuItem submenu] addItem:trelloMenuItem];
         }
@@ -216,6 +216,25 @@ static XTrello *XTrelloSharedPlugin;
         
     }
     return self;
+}
+
+- (void)createBoardForCurrentProject
+{
+    NSString *projectName = [XTModel currentProjectName];
+    NSLog(@"projectname: %@", projectName);
+    if (projectName != nil)
+    {
+        NSString *orgName = [[XTTrelloWrapper sharedInstance] firstOrganizationName];
+        if (orgName == nil)
+        {
+            NSLog(@"no org!!");
+            return;
+        }
+        //TODO: check to see if we are in an organization
+        [[XTTrelloWrapper sharedInstance] createNewTemplateBoardWithName:projectName inOrganization:orgName];
+        self.windowController.boardsLoaded = false;
+        [[XTTrelloWrapper sharedInstance] reloadTrelloData];
+    }
 }
 
 - (void)setInitialData:(NSDictionary *)theData

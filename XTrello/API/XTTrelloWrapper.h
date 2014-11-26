@@ -101,11 +101,11 @@ static NSString *const TFeatureLabel       =        @"feature";
 - (NSDictionary *)organizationWithNameOrID:(NSString *)organizationName;
 - (void)changeBoard:(NSString *)boardName toOrganizationWithNameOrID:(NSString *)organizationName;
 - (NSDictionary *)performSynchronousConnectionFromURLRequest:(NSMutableURLRequest *)request;
-- (void)createNewTemplateBoardWithName:(NSString *)boardName;
+- (void)createNewTemplateBoardWithName:(NSString *)boardName inOrganization:(NSString *)orgName;
 - (void)reloadTrelloData;
 - (void)fetchTrelloData;
 - (void)loadPreviousData;
-
+- (NSString *)firstOrganizationName;
 - (NSDictionary *)cardWithName:(NSString *)cardName inBoardNamed:(NSString *)boardName;
 - (NSDictionary *)listWithName:(NSString *)listName inBoardNamed:(NSString *)boardName;
 - (NSArray *)cardsFromListWithName:(NSString *)listName inBoard:(NSString *)boardName;
