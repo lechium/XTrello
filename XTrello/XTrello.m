@@ -233,12 +233,14 @@ static XTrello *XTrelloSharedPlugin;
         //TODO: check to see if we are in an organization
         [[XTTrelloWrapper sharedInstance] createNewTemplateBoardWithName:projectName inOrganization:orgName];
         self.windowController.boardsLoaded = false;
-        [[XTTrelloWrapper sharedInstance] reloadTrelloData];
+        [self refresh:nil];
+        [self showTrelloWindow];
     }
 }
 
 - (void)setInitialData:(NSDictionary *)theData
 {
+    LOG_SELF;
     trelloData = theData;
     NSDictionary *boards = [theData objectForKey:@"boards"];
     NSArray *boardArray = [self boardDictionaryToArray:boards];
@@ -298,17 +300,27 @@ static XTrello *XTrelloSharedPlugin;
 
 - (void)trelloDataUpdated:(NSDictionary *)theData
 {
-    if (self.windowController.boardsLoaded == false)
+    NSDictionary *boards = [theData objectForKey:@"boards"];
+    NSArray *boardArray = [self boardDictionaryToArray:boards];
+    
+    if (self.windowController.boardsLoaded == false || [boardArray count] > self.windowController.boardCount)
     {
         NSLog(@"boards are not loaded!");
-        NSDictionary *boards = [theData objectForKey:@"boards"];
-        NSArray *boardArray = [self boardDictionaryToArray:boards];
         [self.windowController setBoardArrayContent:boardArray];
-        [self.windowController selectBoardNamed:[[boardArray objectAtIndex:0] valueForKey:@"name"]];
+        NSString *projectName = [XTModel currentProjectName];
+        if (projectName != nil)
+        {
+            [self.windowController selectBoardNamed:projectName];
+        } else {
+           [self.windowController selectBoardNamed:[[boardArray objectAtIndex:0] valueForKey:@"name"]];
+        }
+
         self.windowController.boardsLoaded = TRUE;
     }
+    
+    
     trelloReady = TRUE;
-    theData = trelloData;
+    trelloData = theData;
     [self.windowController dataReloaded];
 }
 

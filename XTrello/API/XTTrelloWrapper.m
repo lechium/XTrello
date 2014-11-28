@@ -1319,15 +1319,23 @@
     NSString *blockedID = [[[lists filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(SELF.name == %@)", @"Blocked"]] lastObject] objectForKey:@"id"];
     NSString *backlogID = [[[lists filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(SELF.name == %@)", @"Backlog"]] lastObject] objectForKey:@"id"];
     NSString *doneID = [[[lists filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(SELF.name == %@)", @"Done"]] lastObject] objectForKey:@"id"];
+    NSString *activeID = [[[lists filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(SELF.name == %@)", @"Active"]] lastObject] objectForKey:@"id"];
+    
+    NSLog(@"activeID: %@", activeID);
     
     [self changeListWithID:newList[@"id"] toName:@"Active"];
     [self changeListWithID:toDoID toPosition:@"top"];
+    
+    activeID = newList[@"id"];
+    
+    NSLog(@"activeID: %@", activeID);
     
     [self createCardWithName:[self initialNoteForType:XTToDoType] toListWithID:toDoID];
     [self createCardWithName:[self initialNoteForType:XTBugsType] toListWithID:bugsID];
     [self createCardWithName:[self initialNoteForType:XTBlockedType] toListWithID:blockedID];
     [self createCardWithName:[self initialNoteForType:XTDoneType] toListWithID:doneID];
     [self createCardWithName:[self initialNoteForType:XTBacklogType] toListWithID:backlogID];
+    [self createCardWithName:[self initialNoteForType:XTActiveType] toListWithID:activeID];
     
     [self setDefaultLabelsForBoardID:boardID];
  //   [self reloadTrelloData];

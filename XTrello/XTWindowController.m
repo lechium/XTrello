@@ -198,6 +198,11 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
     return [[lists objectAtIndex:0] valueForKey:@"name"];
 }
 
+- (int)boardCount
+{
+    return [[boardArrayController arrangedObjects] count];
+}
+
 - (void)setBoardArrayContent:(NSArray *)boardArray
 {
     [boardArrayController setContent:boardArray];

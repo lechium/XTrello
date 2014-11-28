@@ -45,6 +45,8 @@
 @property (nonatomic, assign) long selectedLineNumber;
 @property (nonatomic, retain) NSString *focalText;
 @property (readwrite, assign) BOOL boardsLoaded;
+
+- (int)boardCount;
 - (void)delayedResignFirstResponder;
 - (NSString *)currentProjectName;
 - (void)newCardFromMenu:(id)sender;
