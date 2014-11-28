@@ -16,6 +16,20 @@
  
  https://trello.com/docs/index.html
  
+ 
+ this initial datamodel setup is admittedly an ugly hack and not my best code. i initially put this together as a POC
+ project that i was potentially only planning on using internally with other developers that i work directly with
+ 
+ the data is kept track of in here AND in the XTrello.m main class (which is obviously dumb)
+ there are some wonky issues with reloading data in the window controller which lead me to create two different methods
+ for initial load and updating the data, the "reasoning" behind this decision was we don't want it to reload
+ the initial data and choose the first index board/list every time a refresh occurs. this could be very annoying 
+ for the end user, but then there could be a new board / list / whatever created on the trello web side or other native
+ apps so that needs to be accounted for without quitting and re-opening.
+ 
+ in the end a lot of the datamodel concept should be scrapped in favor of something more robust like core data.
+ 
+ 
  */
 
 #import "XTTrelloWrapper.h"
@@ -42,14 +56,21 @@
 //https://trello.com/1/members/me?key=KEY&token=TOKEN
 //https://trello.com/1/members/my/cards?key=KEY&token=TOKEN
 
+/**
+ 
+ currently the trello local data is stored in a plist file in ~/Library/Application Support/XTrello/trelloBoards.plist
+ 
+ this should only be called upon initial launch to load this prior data while we are 
+ fetching the latest data from trello API directly.
+ 
+ 
+ */
 
 - (void)loadPreviousData
 {
     if ([[NSFileManager defaultManager] fileExistsAtPath:[XTModel boardsDataStoreFile]])
     {
         NSDictionary *cachedData = [NSDictionary dictionaryWithContentsOfFile:[XTModel boardsDataStoreFile]];
-        //NSLog(@"cachedData: %@", cachedData);
-        //[delegate trelloDataFetched:cachedData];
         trelloData = [cachedData mutableCopy];
         [delegate setInitialData:trelloData];
     }
@@ -76,12 +97,14 @@
     return newArray;
 }
 
-/*
+/**
  
- meat and potatoes, it takes in a URL string, gets it as raw UTF8 string data, converts to JSON, strips out NSNull from all
- dictionaries and arrays, and returns the results NSArray or NSDictionary
+ 99% of the time (with most of the API that i've wrapped natively) trello returns a JSON response. we take 
+ this response and conver it into a useful NSDictionary / NSArray. for the most part
+ this response is never processed to check for errors or anything. put it on the TODO list!
  
  */
+
 
 - (NSDictionary *)dictionaryFromJSONStringResponse:(NSString *)theString
 {
@@ -108,6 +131,13 @@
     
 }
 
+/*
+ 
+ meat and potatoes, it takes in a URL string, gets it as raw UTF8 string data, converts to JSON, strips out NSNull from all
+ dictionaries and arrays, and returns the results NSArray or NSDictionary
+ 
+ */
+
 - (NSDictionary *)dictionaryFromURLString:(NSString *)theString
 {
     id newJSONObject = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:theString]] options:0 error:nil];
@@ -129,13 +159,11 @@
     
 }
 
+
+
 #pragma mark trelloData convenience methods
 
-/*
- 
- these 4 methods are all predicated on us already having the trello data
- 
- */
+//obsolete, the label code setup has changed drastically on trellos end to support more custom colors.
 
 - (NSArray *)usefulLabelArray:(NSArray *)labelArray
 {
@@ -147,27 +175,22 @@
     return newArray;
 }
 
+
+/*
+ 
+ most of the methods in this area are our convenience methods for handling the local data, each 
+ one of these are the only ones we generally ever call directly, inside each method that uses 
+ ID's rather than names it generally interacts directly with the trello API after updating our
+ local datamodel.
+ 
+ most of the method names should be self explanatory so im not going to document each one unless i think
+ it is merited
+ 
+ */
+
 - (NSDictionary *)addCardToBoard:(NSString *)boardName inList:(NSString *)listName withName:(NSString *)cardName
 {
     return [self addCardToBoard:boardName inList:listName withName:cardName inPosition:nil];
-}
-
-- (NSImage *)bigAvatarFromHash:(NSString *)theHash
-{
-    NSString *urlString = [NSString stringWithFormat:@"https://trello-avatars.s3.amazonaws.com/%@/170.png", theHash];
-    NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]];
-    return [[NSImage alloc] initWithData:imageData];
-    //https://trello-avatars.s3.amazonaws.com/0884b97b48236c3d08514e0735ffd73f/170.png
-    
-}
-
-- (NSImage *)smallAvatarFromHash:(NSString *)theHash
-{
-    NSString *urlString = [NSString stringWithFormat:@"https://trello-avatars.s3.amazonaws.com/%@/30.png", theHash];
-    NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]];
-    return [[NSImage alloc] initWithData:imageData];
-    //https://trello-avatars.s3.amazonaws.com/0884b97b48236c3d08514e0735ffd73f/30.png
-    
 }
 
 
@@ -177,7 +200,9 @@
     NSMutableArray *cards = [[boardDict valueForKey:@"cards"] mutableCopy];
     NSString *cardID = theCard[@"id"];
     
-    [self deleteCardWithID:cardID];
+    [self deleteCardWithID:cardID]; //trello API call
+    
+    //local data update
     
     [cards removeObject:theCard];
     [boardDict setObject:cards forKey:@"cards"];
@@ -282,7 +307,7 @@
     
     NSMutableDictionary *newCard = [theCard mutableCopy];
     [[newCard objectForKey:@"idMembers"] removeObject:memberID];
-     NSLog(@"replacing: %@ with: %@", [cards objectAtIndex:objectIndex], newCard);
+    // NSLog(@"replacing: %@ with: %@", [cards objectAtIndex:objectIndex], newCard);
     [cards replaceObjectAtIndex:objectIndex withObject:newCard];
     [boardDict setObject:cards forKey:@"cards"];
     [[self.trelloData objectForKey:@"boards"] setObject:boardDict forKey:boardName];
@@ -317,8 +342,6 @@
     NSMutableArray *idMembers = [[newCard objectForKey:@"idMembers"] mutableCopy];
     [idMembers addObject:memberID];
     [newCard setObject:idMembers forKey:@"idMembers"];
-    // [[newCard objectForKey:@"idMembers"] addObject:memberID];
-     NSLog(@"replacing: %@ with: %@", [cards objectAtIndex:objectIndex], newCard);
     [cards replaceObjectAtIndex:objectIndex withObject:newCard];
     [boardDict setObject:cards forKey:@"cards"];
     [[self.trelloData objectForKey:@"boards"] setObject:boardDict forKey:boardName];
@@ -392,10 +415,8 @@
     [[self.trelloData objectForKey:@"boards"] setObject:boardDict forKey:boardName];
     [self.trelloData writeToFile:[XTModel boardsDataStoreFile] atomically:TRUE];
     
-    //stuff below is deprecated, the labels are updated directly in XTTrelloCardView
+    //stuff below is obsolete, the labels are updated directly in XTTrelloCardView
    /*
-    
-
     
     NSArray *labelArray = [self usefulLabelArray:theList];
     NSString *cardID = theCard[@"id"];
@@ -406,6 +427,13 @@
     
     return trelloData;
 }
+
+/*
+ 
+ all of these are to make interacting with trello as painless as possible, making it possible to do any
+ standard task just based on names of cards, lists, boards, etc.
+ 
+ */
 
 - (NSDictionary *)cardWithName:(NSString *)cardName inBoardNamed:(NSString *)boardName
 {
@@ -443,10 +471,13 @@
 
 #pragma mark trello API convenience methods
 
-/*
+
+/** 
  
- all of these are to make interacting with trello as painless as possible, making it possible to do any
- standard task just based on names of cards, lists, boards, etc.
+ these label ids are based on what we personally used for label ids, 
+ you may decide to use something different.
+
+ a lot of these label methods are potentially deprecated.
  
  */
 
@@ -491,18 +522,17 @@
     
     if(labelString == nil)
     {
-        NSLog(@"labelString was nil, set it to original color!");
+     //   NSLog(@"labelString was nil, set it to original color!");
         labelString = colorName; //maybe its already a color?
         
-        NSLog(@"labelString: %@", labelString);
+       // NSLog(@"labelString: %@", labelString);
     }
     
     
     return labelString;
 }
 
-
-
+//shouldnt be used anymore
 - (NSString *)colorStringFromLabelArray:(NSArray *)labelArray
 {
     NSMutableArray *newArray = [[NSMutableArray alloc] init];
@@ -518,47 +548,8 @@
     return [newArray componentsJoinedByString:@","];
 }
 
-- (NSString *)initialNoteForType:(XTInitialNoteType)noteType
-{
-    NSString *initialNote = nil;
-    
-    switch (noteType) {
-       
-        case XTToDoType:
-            
-            initialNote = @"NOTE: Cards in this list represent new features, improvements, or generic tasks that are upcoming but not in active development.";
-            
-            break;
-        
-        case XTBugsType:
-            
-            initialNote = @"NOTE: Cards in this list represent known bugs that need to be addressed, but are not in active development.";
-            break;
-            
-        case XTActiveType:
-            
-            initialNote = @"NOTE: Cards in this list represent items in active development. They should have a user or users associated with them.";
-            break;
-            
-        case XTBlockedType:
-            
-            initialNote = @"NOTE: Cards in this list represent items that are blocked by an issue outside the responsibility of the primary dev.";
-            break;
-            
-        case XTDoneType:
-            
-            initialNote = @"NOTE: Cards in this list represent items that have recently been completed, but are kept here before archiving for visibility.";
-            break;
-            
-        case XTBacklogType:
-            
-            initialNote = @"NOTE: Cards in this list represent bugs, features, or generic tasks that may happen someday, but that day isn't coming very soon.";
-            break;
-            
-    }
-    
-    return initialNote;
-}
+
+#pragma mark member manipulation
 
 - (void)addMemberNamed:(NSString *)memberName toCardWithName:(NSString *)cardName inBoardNamed:(NSString *)boardName
 {
@@ -577,6 +568,7 @@
     }
 }
 
+
 - (void)addMemberID:(NSString *)memberID toCardWithID:(NSString *)cardID
 {
     //%@/cards/%@/idMembers?key=%@&token=%@&value=%@
@@ -585,23 +577,9 @@
     //NSLog(@"newURL: %@", newURL);
     [request setURL:[NSURL URLWithString:newURL]];
     [request setHTTPMethod:@"POST"];
-	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     [self performSynchronousConnectionFromURLRequest:request];
 }
-
-- (void)deleteCardWithID:(NSString *)cardID
-{
-    //%@/cards/%@/actions/comments?key=%@&token=%@&text=%@"
-    
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@?key=%@&token=%@", baseURL, cardID, apiKey, sessionToken];
-    //NSLog(@"newURL: %@", newURL);
-    [request setURL:[NSURL URLWithString:newURL]];
-    [request setHTTPMethod:@"DELETE"];
-	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    [self performSynchronousConnectionFromURLRequest:request];
-}
-
 
 - (void)removeMemberNamed:(NSString *)memberName fromCardNamed:(NSString *)cardName inBoard:(NSString *)boardName
 {
@@ -620,8 +598,6 @@
     }
 }
 
-//card id: 53bdbee3ff37f89db20605dd memberID:53bc57917e03ddc07178eff8
-
 - (void)removeMemberWithID:(NSString *)memberID fromCardID:(NSString *)cardID
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
@@ -634,53 +610,18 @@
     
 }
 
-- (NSArray *)cardCommentsFromCardNamed:(NSString *)cardName inBoard:(NSString *)boardName
-{
-    NSArray *commentArray = nil;
-    NSDictionary *boardDict = [[trelloData objectForKey:@"boards"] objectForKey:boardName];
-    NSArray *cards = [boardDict valueForKey:@"cards"];
-    NSDictionary *cardItem = [[cards filteredArrayUsingPredicate:
-                               [NSPredicate predicateWithFormat:@"(SELF.name == %@)", cardName]] lastObject];
-    NSString *cardID = [cardItem objectForKey:@"id"];
-    if (cardID != nil)
-    {
-        commentArray = [self cardCommentsFromCardID:cardID];
-    }
-    return commentArray;
-}
+#pragma mark card manipulation
 
-- (NSArray *)cardCommentsFromCardID:(NSString *)cardID
-{
-    //https://trello.com/1/cards/53be23b72a746fdf45de45b3/actions?filter=commentCard&key=KEY&token=TOKEN
-    NSString *cardCommentURL = [NSString stringWithFormat:@"%@/cards/%@/actions?filter=commentCard&key=%@&token=%@", baseURL, cardID, apiKey, sessionToken];
-    return (NSArray *)[self dictionaryFromURLString:cardCommentURL];
-}
-
-- (void)postComment:(NSString *)theComment toCardNamed:(NSString *)cardName inBoardNamed:(NSString *)boardName
-{
-    NSDictionary *boardDict = [[trelloData objectForKey:@"boards"] objectForKey:boardName];
-    NSArray *cards = [boardDict valueForKey:@"cards"];
-    NSDictionary *cardItem = [[cards filteredArrayUsingPredicate:
-                               [NSPredicate predicateWithFormat:@"(SELF.name == %@)", cardName]] lastObject];
-    NSString *cardID = [cardItem objectForKey:@"id"];
-    if (cardID != nil)
-    {
-        [self postComment:theComment toCardWithID:cardID];;
-    }
-}
-
-- (void)postComment:(NSString *)theComment toCardWithID:(NSString *)cardID
+- (void)deleteCardWithID:(NSString *)cardID
 {
     //%@/cards/%@/actions/comments?key=%@&token=%@&text=%@"
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    //NSString *updatedComment =  [theComment stringByReplacingOccurrencesOfString:@" " withString:@"+"];
-    NSString *updatedComment = [theComment stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@/actions/comments?key=%@&token=%@&text=%@", baseURL, cardID, apiKey, sessionToken, updatedComment];
+    NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@?key=%@&token=%@", baseURL, cardID, apiKey, sessionToken];
     //NSLog(@"newURL: %@", newURL);
     [request setURL:[NSURL URLWithString:newURL]];
-    [request setHTTPMethod:@"POST"];
-	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPMethod:@"DELETE"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     [self performSynchronousConnectionFromURLRequest:request];
 }
 
@@ -743,7 +684,6 @@
 }
 
 
-
 //https://api.trello.com/1/cards/4eea503d91e31d174600008f?fields=name,idList&member_fields=fullName&key=[application_key]&token=[optional_auth_token]
 
 - (void)setDescription:(NSString *)theDesc forCardNamed:(NSString *)cardName inBoardNamed:(NSString *)boardName
@@ -773,6 +713,42 @@
     [self performSynchronousConnectionFromURLRequest:request];
     
 }
+
+- (void)setName:(NSString *)theName forCardWithID:(NSString *)theCard
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    //NSString *updatedName =  [theName stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+    NSString *updatedName = [theName stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@/name?key=%@&token=%@&value=%@", baseURL, theCard, apiKey, sessionToken, updatedName];
+    //NSLog(@"newURL: %@", newURL);
+    [request setURL:[NSURL URLWithString:newURL]];
+    [request setHTTPMethod:@"PUT"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    
+    [self performSynchronousConnectionFromURLRequest:request];
+    
+}
+
+- (void)changeCardWithID:(NSString *)cardID toPosition:(NSString *)newPosition
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@/pos?key=%@&token=%@&value=%@", baseURL, cardID, apiKey, sessionToken, newPosition];
+    //NSLog(@"newURL: %@", newURL);
+    [request setURL:[NSURL URLWithString:newURL]];
+    [request setHTTPMethod:@"PUT"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    
+    [self performSynchronousConnectionFromURLRequest:request];
+}
+
+- (void)moveCardNamed:(NSString *)cardName inBoardNamed:(NSString *)boardName toPosition:(NSString *)newPosition
+{
+    NSString *cardID = [[self cardWithName:cardName inBoardNamed:boardName] objectForKey:@"id"];
+    [self changeCardWithID:cardID toPosition:newPosition];
+}
+
+
+#pragma mark label manipulation
 
 - (void)setLabels:(NSArray *)theLabels forCardNamed:(NSString *)cardName inBoardNamed:(NSString *)boardName
 {
@@ -814,6 +790,34 @@
     
 }
 
+//PUT /1/boards/[board_id]/labelNames/yellow
+
+- (void)setLabelName:(NSString *)labelName forColor:(NSString *)colorName inBoardWithID:(NSString *)boardID
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    NSString *newURL = [NSString stringWithFormat:@"%@/boards/%@/labelNames/%@?key=%@&token=%@&value=%@", baseURL, boardID, colorName, apiKey, sessionToken, labelName];
+    //NSLog(@"newURL: %@", newURL);
+    [request setURL:[NSURL URLWithString:newURL]];
+    [request setHTTPMethod:@"PUT"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    
+    [self performSynchronousConnectionFromURLRequest:request];
+    
+}
+
+//get the associated dictionary of a color from its name in a particular board, part of the new label changes.
+
+- (NSDictionary *)labelDictionaryFromColor:(NSString *)colorName inBoardNamed:(NSString *)boardName
+{
+    NSLog(@"colorName: %@", colorName);
+    NSDictionary *currentBoard = [self boardNamed:boardName];
+    NSArray *labels = [currentBoard valueForKey:@"labels"];
+    NSDictionary *theLabel = [[labels filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(SELF.color == %@)", colorName]] lastObject];
+    return theLabel;
+    
+}
+
+
 //obsolete method, dont use it! wont support new colors
 - (void)setLabels:(NSArray *)theLabels forCardWithID:(NSString *)theCard
 {
@@ -830,57 +834,7 @@
     
 }
 
-- (void)setName:(NSString *)theName forCardWithID:(NSString *)theCard
-{
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    //NSString *updatedName =  [theName stringByReplacingOccurrencesOfString:@" " withString:@"+"];
-    NSString *updatedName = [theName stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@/name?key=%@&token=%@&value=%@", baseURL, theCard, apiKey, sessionToken, updatedName];
-    //NSLog(@"newURL: %@", newURL);
-	[request setURL:[NSURL URLWithString:newURL]];
-    [request setHTTPMethod:@"PUT"];
-	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    
-    [self performSynchronousConnectionFromURLRequest:request];
-    
-}
-
-+ (NSString *)UTCDateFromDate:(NSDate *)theDate
-{
-    NSDateFormatter *df = [[NSDateFormatter alloc] init];
-    [df setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
-    [df setDateFormat:NEW_DATE_FORMAT];
-    NSString *dayFormatted = [df stringFromDate:theDate];
-    [df setDateFormat:HOUR_FORMAT];
-    NSString *hourFormatted = [df stringFromDate:theDate];
-    NSString *formatString = [NSString stringWithFormat:@"%@T%@.000Z", dayFormatted, hourFormatted];
-    return formatString;
-}
-
-
-- (void)setDueDate:(NSString *)dueDate forCardWithName:(NSString *)cardName inBoardNamed:(NSString *)boardName
-{
-    NSString *cardID = [[self cardWithName:cardName inBoardNamed:boardName] valueForKey:@"id"];
-    NSLog(@"cardID: %@", cardID);
-    [self setDueDate:dueDate forCardWithID:cardID];
-}
-
-
-//due
-
-- (void)setDueDate:(NSString *)dueDate forCardWithID:(NSString *)theCard
-{
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@/due?key=%@&token=%@&value=%@", baseURL, theCard, apiKey, sessionToken, dueDate];
-    //NSLog(@"newURL: %@", newURL);
-	[request setURL:[NSURL URLWithString:newURL]];
-    [request setHTTPMethod:@"PUT"];
-	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    
-    [self performSynchronousConnectionFromURLRequest:request];
-    
-}
-
+#pragma mark list manipulation
 
 /*
  
@@ -928,23 +882,6 @@
     [self changeListWithID:listID toPosition:newPosition];
 }
 
-- (void)changeCardWithID:(NSString *)cardID toPosition:(NSString *)newPosition
-{
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@/pos?key=%@&token=%@&value=%@", baseURL, cardID, apiKey, sessionToken, newPosition];
-    //NSLog(@"newURL: %@", newURL);
-	[request setURL:[NSURL URLWithString:newURL]];
-    [request setHTTPMethod:@"PUT"];
-	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    
-    [self performSynchronousConnectionFromURLRequest:request];
-}
-
-- (void)moveCardNamed:(NSString *)cardName inBoardNamed:(NSString *)boardName toPosition:(NSString *)newPosition
-{
-    NSString *cardID = [[self cardWithName:cardName inBoardNamed:boardName] objectForKey:@"id"];
-    [self changeCardWithID:cardID toPosition:newPosition];
-}
 
 /*
  
@@ -986,6 +923,8 @@
     [self createListWithName:listName inBoardWithID:boardID inLocation:location];
 }
 
+#pragma mark board manipulation
+
 - (NSDictionary *)createBoardWithName:(NSString *)boardName inOrganization:(NSString *)orgName
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
@@ -1025,6 +964,8 @@
     
 }
 
+//every API call goes through here, feed in a URLRequest, and get back a NSDictionary or NSArray (or in one instance an NSString)
+
 - (NSDictionary *)performSynchronousConnectionFromURLRequest:(NSMutableURLRequest *)request
 {
     NSHTTPURLResponse *theResponse = nil;
@@ -1032,11 +973,14 @@
     NSString *datString = [[NSString alloc] initWithData:returnData  encoding:NSUTF8StringEncoding];
   //  NSLog(@"response: %@", datString);
     NSDictionary *responseDict = [self dictionaryFromJSONStringResponse:datString];
+    
+    //in only ONE instance (that i've found) JUST a string is returned rather than a JSON string
+    
     if (responseDict == nil){
         responseDict = datString;
     }
     NSDictionary *returnDict = @{@"response": responseDict, @"statusCode": [NSString stringWithFormat:@"%li", (long)[theResponse statusCode]]};
-    NSLog(@"returnDict: %@", returnDict);
+   // NSLog(@"returnDict: %@", returnDict);
     if ([theResponse statusCode] != 200)
     {
         NSLog(@"response: %@ withStatus Code: %li", datString, (long)[theResponse statusCode]);
@@ -1045,85 +989,10 @@
     return returnDict;
 }
 
-//PUT /1/boards/[board_id]/labelNames/yellow
 
-- (void)setLabelName:(NSString *)labelName forColor:(NSString *)colorName inBoardWithID:(NSString *)boardID
-{
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSString *newURL = [NSString stringWithFormat:@"%@/boards/%@/labelNames/%@?key=%@&token=%@&value=%@", baseURL, boardID, colorName, apiKey, sessionToken, labelName];
-    //NSLog(@"newURL: %@", newURL);
-    [request setURL:[NSURL URLWithString:newURL]];
-    [request setHTTPMethod:@"PUT"];
-	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    
-    [self performSynchronousConnectionFromURLRequest:request];
-    
-}
 
-- (void)setDefaultLabelsForBoardNamed:(NSString *)boardName
-{
-    NSDictionary *boardNamed = [self boardNamed:boardName];
-    NSString *boardID = boardNamed[@"id"];
-    [self setDefaultLabelsForBoardID:boardID];
-}
 
-- (void)setDefaultLabelsForBoardID:(NSString *)boardID
-{
-    for (NSString *colorName in [self colorArray])
-    {
-        NSString *labelString = [self colorLabelFromName:colorName];
-        [self setLabelName:labelString forColor:colorName inBoardWithID:boardID];
-    }
-}
-
-- (void)closeBoardWithName:(NSString *)boardName
-{
-    NSString *boardID = [[self boardNamed:boardName] valueForKey:@"id"];
-    [self closeBoardWithID:boardID];
-}
-
-- (void)closeListWithName:(NSString *)theList inBoardNamed:(NSString *)boardName
-{
-    NSString *listID = [[self listWithName:theList inBoardNamed:boardName] valueForKey:@"id"];
-    [self closeListWithID:listID];
-}
-
-/*
- 
- PUT /1/boards/[board_id]/closed
- Required permissions: own, write
- Arguments
- value (required)
- Valid Values:
- true
- false
- 
- */
-
-- (void)closeBoardWithID:(NSString *)boardID
-{
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSString *newURL = [NSString stringWithFormat:@"%@/boards/%@/closed?key=%@&token=%@&value=%@", baseURL, boardID, apiKey, sessionToken, @"true"];
-    //NSLog(@"newURL: %@", newURL);
-	[request setURL:[NSURL URLWithString:newURL]];
-    [request setHTTPMethod:@"PUT"];
-	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    
-    [self performSynchronousConnectionFromURLRequest:request];
-}
-
-- (void)closeListWithID:(NSString *)listID
-{
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSString *newURL = [NSString stringWithFormat:@"%@/lists/%@/closed?key=%@&token=%@&value=%@", baseURL, listID, apiKey, sessionToken, @"true"];
-    //NSLog(@"newURL: %@", newURL);
-	[request setURL:[NSURL URLWithString:newURL]];
-    [request setHTTPMethod:@"PUT"];
-	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    
-    [self performSynchronousConnectionFromURLRequest:request];
-}
-
+#pragma mark fetching data
 
 - (void)fetchTrelloData
 {
@@ -1132,36 +1001,32 @@
     [NSThread detachNewThreadSelector:@selector(fetchTrelloDataThreaded) toTarget:self withObject:nil];
 }
 
-- (NSDictionary *)labelDictionaryFromColor:(NSString *)colorName inBoardNamed:(NSString *)boardName
-{
-    NSLog(@"colorName: %@", colorName);
-    NSDictionary *currentBoard = [self boardNamed:boardName];
-    NSArray *labels = [currentBoard valueForKey:@"labels"];
-    NSDictionary *theLabel = [[labels filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(SELF.color == %@)", colorName]] lastObject];
-    return theLabel;
-    
-}
 
 - (void)fetchTrelloDataThreaded
 {
     @autoreleasepool {
         LOG_SELF;
-        //NSArray *commentTest = [self cardCommentsFromCardID:@"53be23b72a746fdf45de45b3"];
-        //NSLog(@"comments test: %@", commentTest);
+      
         NSMutableDictionary *trelloDict = [[NSMutableDictionary alloc] init];
+   
+        //url for getting our boards
         NSString *boards = [NSString stringWithFormat:@"%@/members/me/boards?key=%@&token=%@", baseURL, apiKey, sessionToken];
+        
+        //url for getting our data about our user
         NSString *me = [NSString stringWithFormat:@"%@/members/me?key=%@&token=%@", baseURL, apiKey, sessionToken];
        // NSString *myCards = [NSString stringWithFormat:@"%@/members/my/cards?key=%@&token=%@", baseURL, apiKey, sessionToken];
-        NSLog(@"boards: %@", boards);
+       // NSLog(@"boards: %@", boards);
         NSArray *jsonBoards = (NSArray *)[self dictionaryFromURLString:boards];
         NSDictionary *jsonMe = [self dictionaryFromURLString:me];
         
         NSArray *myOrgs = jsonMe[@"idOrganizations"];
+  
+        //un-used example of fetching an avatar for your user.
         
-        NSString *myAvatar = jsonMe[@"avatarHash"];
-        NSImage *myBigAvatar = [self bigAvatarFromHash:myAvatar];
+        //NSString *myAvatar = jsonMe[@"avatarHash"];
+        //NSImage *myBigAvatar = [self bigAvatarFromHash:myAvatar];
         
-        [[myBigAvatar TIFFRepresentation] writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Desktop/kevin.png"] atomically:TRUE];
+        //[[myBigAvatar TIFFRepresentation] writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Desktop/me.png"] atomically:TRUE];
         
         
         NSMutableArray *orgArray = [[NSMutableArray alloc] init];
@@ -1171,21 +1036,29 @@
             [orgArray addObject:orgDict];
         }
         NSMutableDictionary *meEditable = [jsonMe mutableCopy];
+      
+        //its possible there are no organizations, if there isn't certain functionality wont work.
         if ([orgArray count] > 0)
         {
             [meEditable setObject:orgArray forKey:@"organizations"];
         }
         
-      //  NSDictionary *jsonCards = [self dictionaryFromURLString:myCards];
+        //the fetch for boards above will get ALL of them, open AND closed, we want to only add the open ones
+        
         NSMutableDictionary *updatedBoards = [[NSMutableDictionary alloc] init];
         for (NSDictionary *currentBoard in jsonBoards)
         {
+            //ignore any closed boards.
+            
             if ([currentBoard[@"closed"] boolValue] == FALSE)
             {
                 NSMutableDictionary *newBoard = [currentBoard mutableCopy];
                 NSString *boardID = [currentBoard objectForKey:@"id"];
                 NSString *name = [currentBoard objectForKey:@"name"];
                 NSString *currentLabelNamesURL = [NSString stringWithFormat:@"%@/boards/%@/labelNames?key=%@&token=%@", baseURL, boardID, apiKey, sessionToken];
+             
+                //the board data fetch above USED to get all our label info, doesn't appear to fetch it properly anymore
+                //so we need to manually fetch label names / colors / data for each board
                 
                 NSString *currentLabelsURL = [NSString stringWithFormat:@"%@/boards/%@/labels?key=%@&token=%@", baseURL, boardID, apiKey, sessionToken];
                 NSDictionary *labelsDict = [self dictionaryFromURLString:currentLabelsURL];
@@ -1200,6 +1073,7 @@
                 NSArray *currentCards = (NSArray *)[self dictionaryFromURLString:currentCardURL];
                 if (currentCards != nil)
                 {
+                    //only get cards that aren't archived / closed.
                     [newBoard setObject:[currentCards filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"closed = NO"]] forKey:@"cards"];
                 }
                 NSString *currentListsURL = [NSString stringWithFormat:@"%@/board/%@/lists?key=%@&token=%@", baseURL, boardID, apiKey, sessionToken];
@@ -1212,7 +1086,6 @@
                 for (NSDictionary *member in memberArray)
                 {
                     NSString *memberID = member[@"idMember"];
-                    //https://trello.com/1/members/53bb7a84bc95e5f6e6afcaa5?key=KEY&token=TOKEN
                     NSString *currentMemberURL = [NSString stringWithFormat:@"%@/members/%@?key=%@&token=%@", baseURL, memberID, apiKey, sessionToken];
                     NSDictionary *currentMember = [self dictionaryFromURLString:currentMemberURL];
                     [properMemberArray addObject:currentMember];
@@ -1236,8 +1109,6 @@
         }
         [trelloDict setObject:updatedBoards forKey:@"boards"];
         [trelloDict setObject:meEditable forKey:@"me"];
-     //   [trelloDict setObject:jsonCards forKey:@"cards"];
-      //  NSString *sampleDictPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Desktop/Sciencely.plist"];
         
         [trelloDict writeToFile:[XTModel boardsDataStoreFile] atomically:TRUE];
         
@@ -1279,6 +1150,27 @@
     [NSThread detachNewThreadSelector:@selector(fetchTrelloDataThreaded) toTarget:self withObject:nil];
 }
 
+#pragma mark creating template boards
+
+- (void)setDefaultLabelsForBoardNamed:(NSString *)boardName
+{
+    NSDictionary *boardNamed = [self boardNamed:boardName];
+    NSString *boardID = boardNamed[@"id"];
+    [self setDefaultLabelsForBoardID:boardID];
+}
+
+- (void)setDefaultLabelsForBoardID:(NSString *)boardID
+{
+    for (NSString *colorName in [self colorArray])
+    {
+        NSString *labelString = [self colorLabelFromName:colorName];
+        [self setLabelName:labelString forColor:colorName inBoardWithID:boardID];
+    }
+}
+
+
+//kind of a kludge used for the template board creation below.
+
 - (NSString *)firstOrganizationName
 {
     NSArray *orgs = [[trelloData objectForKey:@"me"] objectForKey:@"organizations"];
@@ -1289,6 +1181,48 @@
         return orgName;
     }
     return nil;
+}
+
+- (NSString *)initialNoteForType:(XTInitialNoteType)noteType
+{
+    NSString *initialNote = nil;
+    
+    switch (noteType) {
+            
+        case XTToDoType:
+            
+            initialNote = @"NOTE: Cards in this list represent new features, improvements, or generic tasks that are upcoming but not in active development.";
+            
+            break;
+            
+        case XTBugsType:
+            
+            initialNote = @"NOTE: Cards in this list represent known bugs that need to be addressed, but are not in active development.";
+            break;
+            
+        case XTActiveType:
+            
+            initialNote = @"NOTE: Cards in this list represent items in active development. They should have a user or users associated with them.";
+            break;
+            
+        case XTBlockedType:
+            
+            initialNote = @"NOTE: Cards in this list represent items that are blocked by an issue outside the responsibility of the primary dev.";
+            break;
+            
+        case XTDoneType:
+            
+            initialNote = @"NOTE: Cards in this list represent items that have recently been completed, but are kept here before archiving for visibility.";
+            break;
+            
+        case XTBacklogType:
+            
+            initialNote = @"NOTE: Cards in this list represent bugs, features, or generic tasks that may happen someday, but that day isn't coming very soon.";
+            break;
+            
+    }
+    
+    return initialNote;
 }
 
 /*
@@ -1319,16 +1253,11 @@
     NSString *blockedID = [[[lists filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(SELF.name == %@)", @"Blocked"]] lastObject] objectForKey:@"id"];
     NSString *backlogID = [[[lists filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(SELF.name == %@)", @"Backlog"]] lastObject] objectForKey:@"id"];
     NSString *doneID = [[[lists filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(SELF.name == %@)", @"Done"]] lastObject] objectForKey:@"id"];
-    NSString *activeID = [[[lists filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(SELF.name == %@)", @"Active"]] lastObject] objectForKey:@"id"];
-    
-    NSLog(@"activeID: %@", activeID);
     
     [self changeListWithID:newList[@"id"] toName:@"Active"];
     [self changeListWithID:toDoID toPosition:@"top"];
     
-    activeID = newList[@"id"];
-    
-    NSLog(@"activeID: %@", activeID);
+    NSString *activeID = newList[@"id"];
     
     [self createCardWithName:[self initialNoteForType:XTToDoType] toListWithID:toDoID];
     [self createCardWithName:[self initialNoteForType:XTBugsType] toListWithID:bugsID];
@@ -1338,7 +1267,167 @@
     [self createCardWithName:[self initialNoteForType:XTActiveType] toListWithID:activeID];
     
     [self setDefaultLabelsForBoardID:boardID];
- //   [self reloadTrelloData];
 }
+
+#pragma mark unused API methods
+
+//both of these methods are how you fetch avatars for users.
+
+- (NSImage *)bigAvatarFromHash:(NSString *)theHash
+{
+    NSString *urlString = [NSString stringWithFormat:@"https://trello-avatars.s3.amazonaws.com/%@/170.png", theHash];
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]];
+    return [[NSImage alloc] initWithData:imageData];
+    //https://trello-avatars.s3.amazonaws.com/0884b97b48236c3d08514e0735ffd73f/170.png
+    
+}
+
+- (NSImage *)smallAvatarFromHash:(NSString *)theHash
+{
+    NSString *urlString = [NSString stringWithFormat:@"https://trello-avatars.s3.amazonaws.com/%@/30.png", theHash];
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]];
+    return [[NSImage alloc] initWithData:imageData];
+    //https://trello-avatars.s3.amazonaws.com/0884b97b48236c3d08514e0735ffd73f/30.png
+    
+}
+
+
+- (void)closeBoardWithName:(NSString *)boardName
+{
+    NSString *boardID = [[self boardNamed:boardName] valueForKey:@"id"];
+    [self closeBoardWithID:boardID];
+}
+
+- (void)closeListWithName:(NSString *)theList inBoardNamed:(NSString *)boardName
+{
+    NSString *listID = [[self listWithName:theList inBoardNamed:boardName] valueForKey:@"id"];
+    [self closeListWithID:listID];
+}
+
+/*
+ 
+ PUT /1/boards/[board_id]/closed
+ Required permissions: own, write
+ Arguments
+ value (required)
+ Valid Values:
+ true
+ false
+ 
+ */
+
+- (void)closeBoardWithID:(NSString *)boardID
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    NSString *newURL = [NSString stringWithFormat:@"%@/boards/%@/closed?key=%@&token=%@&value=%@", baseURL, boardID, apiKey, sessionToken, @"true"];
+    //NSLog(@"newURL: %@", newURL);
+    [request setURL:[NSURL URLWithString:newURL]];
+    [request setHTTPMethod:@"PUT"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    
+    [self performSynchronousConnectionFromURLRequest:request];
+}
+
+- (void)closeListWithID:(NSString *)listID
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    NSString *newURL = [NSString stringWithFormat:@"%@/lists/%@/closed?key=%@&token=%@&value=%@", baseURL, listID, apiKey, sessionToken, @"true"];
+    //NSLog(@"newURL: %@", newURL);
+    [request setURL:[NSURL URLWithString:newURL]];
+    [request setHTTPMethod:@"PUT"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    
+    [self performSynchronousConnectionFromURLRequest:request];
+}
+
+/*
+ 
+ currently there is no native support in the plugin for adding card comments, wanted to have these
+ in here just to be thorough in case i ever decided to implement these natively.
+ 
+ */
+
+- (void)postComment:(NSString *)theComment toCardNamed:(NSString *)cardName inBoardNamed:(NSString *)boardName
+{
+    NSDictionary *boardDict = [[trelloData objectForKey:@"boards"] objectForKey:boardName];
+    NSArray *cards = [boardDict valueForKey:@"cards"];
+    NSDictionary *cardItem = [[cards filteredArrayUsingPredicate:
+                               [NSPredicate predicateWithFormat:@"(SELF.name == %@)", cardName]] lastObject];
+    NSString *cardID = [cardItem objectForKey:@"id"];
+    if (cardID != nil)
+    {
+        [self postComment:theComment toCardWithID:cardID];;
+    }
+}
+
+- (void)postComment:(NSString *)theComment toCardWithID:(NSString *)cardID
+{
+    //%@/cards/%@/actions/comments?key=%@&token=%@&text=%@"
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    //NSString *updatedComment =  [theComment stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+    NSString *updatedComment = [theComment stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@/actions/comments?key=%@&token=%@&text=%@", baseURL, cardID, apiKey, sessionToken, updatedComment];
+    //NSLog(@"newURL: %@", newURL);
+    [request setURL:[NSURL URLWithString:newURL]];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [self performSynchronousConnectionFromURLRequest:request];
+}
+
+- (NSArray *)cardCommentsFromCardNamed:(NSString *)cardName inBoard:(NSString *)boardName
+{
+    NSArray *commentArray = nil;
+    NSDictionary *boardDict = [[trelloData objectForKey:@"boards"] objectForKey:boardName];
+    NSArray *cards = [boardDict valueForKey:@"cards"];
+    NSDictionary *cardItem = [[cards filteredArrayUsingPredicate:
+                               [NSPredicate predicateWithFormat:@"(SELF.name == %@)", cardName]] lastObject];
+    NSString *cardID = [cardItem objectForKey:@"id"];
+    if (cardID != nil)
+    {
+        commentArray = [self cardCommentsFromCardID:cardID];
+    }
+    return commentArray;
+}
+
+- (NSArray *)cardCommentsFromCardID:(NSString *)cardID
+{
+    NSString *cardCommentURL = [NSString stringWithFormat:@"%@/cards/%@/actions?filter=commentCard&key=%@&token=%@", baseURL, cardID, apiKey, sessionToken];
+    return (NSArray *)[self dictionaryFromURLString:cardCommentURL];
+}
+
++ (NSString *)UTCDateFromDate:(NSDate *)theDate
+{
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
+    [df setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
+    [df setDateFormat:NEW_DATE_FORMAT];
+    NSString *dayFormatted = [df stringFromDate:theDate];
+    [df setDateFormat:HOUR_FORMAT];
+    NSString *hourFormatted = [df stringFromDate:theDate];
+    NSString *formatString = [NSString stringWithFormat:@"%@T%@.000Z", dayFormatted, hourFormatted];
+    return formatString;
+}
+
+- (void)setDueDate:(NSString *)dueDate forCardWithName:(NSString *)cardName inBoardNamed:(NSString *)boardName
+{
+    NSString *cardID = [[self cardWithName:cardName inBoardNamed:boardName] valueForKey:@"id"];
+    NSLog(@"cardID: %@", cardID);
+    [self setDueDate:dueDate forCardWithID:cardID];
+}
+
+- (void)setDueDate:(NSString *)dueDate forCardWithID:(NSString *)theCard
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@/due?key=%@&token=%@&value=%@", baseURL, theCard, apiKey, sessionToken, dueDate];
+    //NSLog(@"newURL: %@", newURL);
+    [request setURL:[NSURL URLWithString:newURL]];
+    [request setHTTPMethod:@"PUT"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    
+    [self performSynchronousConnectionFromURLRequest:request];
+    
+}
+
+
 
 @end
