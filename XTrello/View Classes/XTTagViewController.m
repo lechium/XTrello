@@ -16,16 +16,21 @@
     if (self) {
         // Initialization code here.
         float offset = 0;
+        float tagSize = 40;
+        if (labelArray.count > 6)
+        {
+            tagSize = (264 / labelArray.count) - 4;
+            
+        }
         for (NSString *colorString in labelArray)
         {
             NSColor *newColor = [self colorFromString:colorString];
-            NSRect viewRect = NSMakeRect(offset, 0, 40, 10);
+            NSRect viewRect = NSMakeRect(offset, 0, tagSize, 10);
             XTTagView *newView = [[XTTagView alloc] initWithFrame:viewRect andColor:newColor];
             //  NSView *newView = [[NSView alloc] initWithFrame:viewRect];
             [self addSubview:newView];
-            offset = offset + 44;
+            offset = offset + (tagSize + 4);
         }
-        
     }
     return self;
 }
@@ -72,8 +77,9 @@
 - (void)updateLabels:(NSArray *)theLabels
 {
    [self removeAllSubviews];
-  //  NSArray *finalArray = [self reuseSubviews:theLabels];
     float offset = 0;
+    int currentLabel = 0;
+    float currentY = 0;
 //    if (finalArray.count != theLabels.count)
 //    {
 //        //update the offset
@@ -83,12 +89,19 @@
 //    }
     for (NSString *colorString in theLabels)
     {
+        NSLog(@"currentLabel: %i", currentLabel);
+        if (currentLabel == 7)
+        {
+            currentY = 22;
+            offset = 0;
+        }
         NSColor *newColor = [self colorFromString:colorString];
-        NSRect viewRect = NSMakeRect(offset, 0, 40, 10);
+        NSRect viewRect = NSMakeRect(offset, currentY, 40, 10);
+        
         XTTagView *newView = [[XTTagView alloc] initWithFrame:viewRect andColor:newColor];
-        //  NSView *newView = [[NSView alloc] initWithFrame:viewRect];
         [self addSubview:newView];
         offset = offset + 44;
+        currentLabel++;
     }
     [self setNeedsDisplay:TRUE];
 }

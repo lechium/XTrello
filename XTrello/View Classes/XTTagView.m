@@ -16,6 +16,7 @@
     if (self) {
         // Initialization code here.
         self.backgroundColor = bgColor;
+        
     }
     return self;
 }
@@ -29,7 +30,12 @@
    
 }
 
-
+- (NSString *)description
+{
+    NSString *desc = [super description];
+   return [NSString stringWithFormat:@"%@ %@", desc, NSStringFromRect(self.frame)];
+    
+}
 
 /*
  
