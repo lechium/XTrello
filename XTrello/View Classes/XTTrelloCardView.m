@@ -344,6 +344,12 @@
 - (void)mouseDownForTextFields:(NSEvent *)theEvent {
     // If shift or command are being held, we're selecting rows, so ignore
     if ((NSCommandKeyMask | NSShiftKeyMask) & [theEvent modifierFlags]) return;
+    if ( NSControlKeyMask & [theEvent modifierFlags])
+    {
+        [self rightMouseDown:theEvent];
+        return;
+    }
+    
     NSPoint selfPoint = [self convertPoint:theEvent.locationInWindow fromView:nil];
     for (NSView *subview in [self subviews])
     {
