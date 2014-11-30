@@ -7,7 +7,7 @@ The initial setup process is a bit cumbersome, depending on the interest garnere
 
 Setup Process.
 
-1. Create trello account (if you don't have one already) at trello.com
+1. Create trello account (if you don't have one already) at http://trello.com
 2. Open this project in Xcode and build (it will build into the proper location)
 3. Quit and Re-Open XCode
 4. View -> Trello -> Show Trello Boards (this will show the preferences window if API Key / Session Token is missing)
