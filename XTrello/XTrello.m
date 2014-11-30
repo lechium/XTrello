@@ -136,9 +136,10 @@ static XTrello *XTrelloSharedPlugin;
             [trelloItem setKeyEquivalentModifierMask:NSControlKeyMask];
             [trelloItem setTarget:self.windowController];
             [trelloMenu addItem:trelloItem];
-            NSMenuItem *prefItem = [[NSMenuItem alloc] initWithTitle:@"Create Board for Current Project..." action:@selector(createBoardForCurrentProject) keyEquivalent:@""];
-            [prefItem setTarget:self];
-            [trelloMenu addItem:prefItem];
+            NSMenuItem *boardItem = [[NSMenuItem alloc] initWithTitle:@"Create Board for Current Project..." action:@selector(createBoardForCurrentProject) keyEquivalent:@""];
+            [boardItem setTarget:self];
+            [trelloMenu addItem:boardItem];
+            
             [trelloMenuItem setSubmenu:trelloMenu];
             [[menuItem submenu] addItem:trelloMenuItem];
         }
@@ -213,6 +214,12 @@ static XTrello *XTrelloSharedPlugin;
                 forKeyPath:kXTrelloAuthToken
                    options:NSKeyValueObservingOptionNew
                    context:NULL];
+        
+        [prefs addObserver:self
+                forKeyPath:kXTrelloAPIKey
+                   options:NSKeyValueObservingOptionNew
+                   context:NULL];
+        
         
     }
     return self;
@@ -303,7 +310,7 @@ static XTrello *XTrelloSharedPlugin;
     NSDictionary *boards = [theData objectForKey:@"boards"];
     NSArray *boardArray = [self boardDictionaryToArray:boards];
     
-    if (self.windowController.boardsLoaded == false || [boardArray count] > self.windowController.boardCount)
+    if (self.windowController.boardsLoaded == false || [boardArray count] != self.windowController.boardCount)
     {
         NSLog(@"boards are not loaded!");
         [self.windowController setBoardArrayContent:boardArray];
@@ -380,6 +387,12 @@ static XTrello *XTrelloSharedPlugin;
             [[XTTrelloWrapper sharedInstance] setSessionToken:newSessionToken];
             [self refresh:nil];
             [self setupRefreshTimer];
+        } else if ([keyPath isEqualToString:kXTrelloAPIKey])
+        {
+            //validate API key
+            
+            
+            
         }
     }
 }
@@ -421,6 +434,8 @@ static XTrello *XTrelloSharedPlugin;
     
 }
 
+//add a menu item to the window menu to easily get to the XTrello window or browser window.
+
 - (void)addItemForWindowTag:(NSInteger)windowTag
 {
     //1 = main, 2 = browser, 3 = prefs
@@ -430,7 +445,7 @@ static XTrello *XTrelloSharedPlugin;
             
         case 1:
             
-            xtrelloWindowMenuItem = [[menuItem submenu] itemWithTitle:@"Xtrello Cards"];
+            xtrelloWindowMenuItem = [[menuItem submenu] itemWithTitle:@"XTrello Cards"];
             if (xtrelloWindowMenuItem == nil)
                 [[menuItem submenu] removeItem:xtrelloWindowMenuItem];
             
@@ -438,10 +453,10 @@ static XTrello *XTrelloSharedPlugin;
             
         case 2:
             
-            xtrelloBrowserWindowMenuItem = [[menuItem submenu] itemWithTitle:@"Xtrello Browser"];
+            xtrelloBrowserWindowMenuItem = [[menuItem submenu] itemWithTitle:@"XTrello Browser"];
             if (xtrelloBrowserWindowMenuItem == nil)
             {
-                xtrelloBrowserWindowMenuItem = [[NSMenuItem alloc] initWithTitle:@"Xtrello Browser" action:@selector(showBrowserWindow) keyEquivalent:@""];
+                xtrelloBrowserWindowMenuItem = [[NSMenuItem alloc] initWithTitle:@"XTrello Browser" action:@selector(showBrowserWindow) keyEquivalent:@""];
                 [[menuItem submenu] insertItem:xtrelloBrowserWindowMenuItem atIndex:14];
                 [xtrelloBrowserWindowMenuItem setTarget:self];
             }
@@ -515,6 +530,13 @@ static XTrello *XTrelloSharedPlugin;
     [self.windowController.window makeKeyAndOrderFront:nil];
 }
 
+/**
+ 
+ we keep track of the selection changing in case the user is trying to create a card
+ with a particular section of code as the description for hte "jump to" feature.
+ 
+ */
+
 - (void) selectionDidChange:(NSNotification *)notification
 {
     if ([[notification object] isKindOfClass:[NSTextView class]]) {
@@ -542,6 +564,13 @@ static XTrello *XTrelloSharedPlugin;
         
     }
 }
+
+/**
+ 
+ this section of code here is completely un-related to xtrello and was just 
+ an example of trying to parse / manipulate the code navigation bar
+ 
+ */
 
 - (void)doNavbarScience
 {

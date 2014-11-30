@@ -105,6 +105,7 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
         NSError *error = nil;
         NSXMLDocument *document = [[NSXMLDocument alloc] initWithXMLString:datString options:NSXMLDocumentTidyHTML error:&error];
         NSXMLElement *root = [document rootElement];
+       // NSLog(@"root: %@", root);
         NSString *token=[[[[root objectsForXQuery:@"//pre" error:&error]objectAtIndex:0] stringValue] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         if (token.length != 0)
         {
@@ -112,6 +113,35 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
         }
         // NSLog(@"token: -%@-", token);
     }
+    
+    //check to see if we are trying to generate / fetch API key.
+    
+    NSURL *key = actionInformation[@"WebActionOriginalURLKey"];
+    if ([[key absoluteString] isEqualToString:@"https://trello.com/1/appKey/generate"])
+    {
+        NSHTTPURLResponse *theResponse = nil;
+        NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:&theResponse error:nil];
+        NSString *datString = [[NSString alloc] initWithData:returnData  encoding:NSUTF8StringEncoding];
+       //   NSLog(@"datString: %@", datString);
+        NSError *error = nil;
+        NSXMLDocument *document = [[NSXMLDocument alloc] initWithXMLString:datString options:NSXMLDocumentTidyHTML error:&error];
+        NSXMLElement *root = [document rootElement];
+        NSArray *inputNodes = [root nodesForXPath:@"//div[@class='account-content clearfix']/p/input[1]" error:nil];
+        //NSLog(@"inputNodeS: %@", inputNodes);
+        if (inputNodes.count > 0)
+        {
+            NSXMLElement *inputNode = [inputNodes objectAtIndex:0];
+            ;
+            NSString *apiKey = [[inputNode attributeForName:@"value"] stringValue];
+            NSLog(@"apikey: %@", apiKey);
+            if (apiKey.length > 0)
+            {
+                [UD setObject:apiKey forKey:kXTrelloAPIKey];
+            }
+        }
+        
+    }
+    
   //  NSLog(@"actionInfo: %@ request: %@", actionInformation, request);
     [listener use];
 }
@@ -260,6 +290,19 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
 - (void)dataReloaded
 {
     [self populateCardsFromListNamed:currentList inBoard:currentBoard];
+}
+
+- (IBAction)helpButtonPressed:(id)sender
+{
+    NSAlert *missingAPIKeyAlert = [NSAlert alertWithMessageText:@"Trello API Key" defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:@"To get the trello API key you need to generate it on trellos website. If it isn't set automatically you will need to copy any paste it from the next screen."];
+    [missingAPIKeyAlert runModal];
+    NSURLRequest *theRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://trello.com/1/appKey/generate"]];
+    [[webView mainFrame] loadRequest:theRequest];
+    [windowTwo makeKeyAndOrderFront:nil];
+    [[self delegate] addItemForWindowTag:2];
+    
+   // [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://trello.com/1/appKey/generate"]];
+    //[apiKeyField becomeFirstResponder];
 }
 
 - (IBAction)refresh:(id)sender
@@ -510,8 +553,12 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
         NSLog(@"MISSING API KEY!");
         NSAlert *missingAPIKeyAlert = [NSAlert alertWithMessageText:@"Missing Trello API Key" defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:@"You are missing a Trello API key, this needs to be set before you can generate a new session token!"];
         [missingAPIKeyAlert runModal];
-        [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://trello.com/1/appKey/generate"]];
-        [apiKeyField becomeFirstResponder];
+        NSURLRequest *theRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://trello.com/1/appKey/generate"]];
+        [[webView mainFrame] loadRequest:theRequest];
+        [windowTwo makeKeyAndOrderFront:nil];
+        [[self delegate] addItemForWindowTag:2];
+        //[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://trello.com/1/appKey/generate"]];
+        //[apiKeyField becomeFirstResponder];
     }
 }
 

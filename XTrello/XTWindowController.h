@@ -46,6 +46,7 @@
 @property (nonatomic, retain) NSString *focalText;
 @property (readwrite, assign) BOOL boardsLoaded;
 
+- (IBAction)helpButtonPressed:(id)sender;
 - (int)boardCount;
 - (void)delayedResignFirstResponder;
 - (NSString *)currentProjectName;

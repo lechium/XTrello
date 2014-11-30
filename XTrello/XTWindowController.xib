@@ -337,6 +337,17 @@
                             </binding>
                         </connections>
                     </button>
+                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="scb-2i-3w3">
+                        <rect key="frame" x="397" y="71" width="102" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Fetch Key" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2QU-jW-okp">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="helpButtonPressed:" target="-2" id="UFH-wn-p4h"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
             <connections>
