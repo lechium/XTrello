@@ -11,9 +11,9 @@ Setup Process.
 2. Open this project in Xcode and build (it will build into the proper location)
 3. Quit and Re-Open XCode
 4. View -> Trello -> Show Trello Boards (this will show the preferences window if API Key / Session Token is missing)
-5. Click "Generate Token"
-6. This will open up trello.com in your default browser to the page to reference your API key (its the top API key not the secret one)
-7. Copy and paste your API Key into the second text field in the XTrello preferences window (Trello Key)
+5. Click "Fetch Key"
+6. This will open up https://trello.com/1/appKey/generate in the native XTrello browser window and SHOULD copy your API key automatically, if it does not you will need to copy and paste it manually
+7. (only needed if step 6 fails) Copy and paste your API Key into the second text field in the XTrello preferences window (Trello Key)
 8. Click "Generate Token" again
 9. This will open the built in browser window in XTrello and ask you for permission for XTrello to access your trello boards
 10. Click "Allow"
@@ -29,3 +29,7 @@ Adding card labels
 Creating cards referencing sections of source code
 
 ![alt text](create_source_card.png "Creating cards from source")
+
+Double clicking a card native browser window
+
+![alt text](browser_window.png "Browser window from card double click")
