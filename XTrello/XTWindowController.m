@@ -122,18 +122,16 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
         NSHTTPURLResponse *theResponse = nil;
         NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:&theResponse error:nil];
         NSString *datString = [[NSString alloc] initWithData:returnData  encoding:NSUTF8StringEncoding];
-       //   NSLog(@"datString: %@", datString);
         NSError *error = nil;
         NSXMLDocument *document = [[NSXMLDocument alloc] initWithXMLString:datString options:NSXMLDocumentTidyHTML error:&error];
         NSXMLElement *root = [document rootElement];
         NSArray *inputNodes = [root nodesForXPath:@"//div[@class='account-content clearfix']/p/input[1]" error:nil];
-        //NSLog(@"inputNodeS: %@", inputNodes);
         if (inputNodes.count > 0)
         {
             NSXMLElement *inputNode = [inputNodes objectAtIndex:0];
             ;
             NSString *apiKey = [[inputNode attributeForName:@"value"] stringValue];
-            NSLog(@"apikey: %@", apiKey);
+      //      NSLog(@"apikey: %@", apiKey);
             if (apiKey.length > 0)
             {
                 [UD setObject:apiKey forKey:kXTrelloAPIKey];
