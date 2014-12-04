@@ -231,12 +231,23 @@ static XTrello *XTrelloSharedPlugin;
     NSLog(@"projectname: %@", projectName);
     if (projectName != nil)
     {
-        NSString *orgName = [[XTTrelloWrapper sharedInstance] firstOrganizationName];
-        if (orgName == nil)
+        //make sure the board doesn't already exist.
+        
+        if ([[XTTrelloWrapper sharedInstance] boardNamed:projectName] != nil)
         {
-            NSLog(@"no org!!");
+            NSLog(@"board already exists for project: %@ bail!!", projectName);
+            NSAlert *existsAlert = [NSAlert alertWithMessageText:@"Board Already Exists" defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:@"A board already exists for this project!"];
+             [existsAlert runModal];
             return;
+            
         }
+        
+        NSString *orgName = [[XTTrelloWrapper sharedInstance] firstOrganizationName];
+       // if (orgName == nil)
+        //{
+          //  NSLog(@"no org!!");
+           // return;
+       // }
         //TODO: check to see if we are in an organization
         [[XTTrelloWrapper sharedInstance] createNewTemplateBoardWithName:projectName inOrganization:orgName];
         self.windowController.boardsLoaded = false;

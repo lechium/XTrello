@@ -928,7 +928,14 @@
 - (NSDictionary *)createBoardWithName:(NSString *)boardName inOrganization:(NSString *)orgName
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSString *newURL = [NSString stringWithFormat:@"%@/boards?name=%@&idOrganization=%@&key=%@&token=%@&prefs_permissionLevel=org", baseURL, boardName,orgName, apiKey, sessionToken];
+    NSString *newURL = nil;
+    if (orgName != nil)
+    {
+        newURL = [NSString stringWithFormat:@"%@/boards?name=%@&idOrganization=%@&key=%@&token=%@&prefs_permissionLevel=org", baseURL, boardName,orgName, apiKey, sessionToken];
+    } else {
+        newURL = [NSString stringWithFormat:@"%@/boards?name=%@&key=%@&token=%@&prefs_permissionLevel=private", baseURL, boardName, apiKey, sessionToken];
+    }
+    // NSString *newURL = [NSString stringWithFormat:@"%@/boards?name=%@&idOrganization=%@&key=%@&token=%@&prefs_permissionLevel=org", baseURL, boardName,orgName, apiKey, sessionToken];
     NSLog(@"newURL: %@", newURL);
 	[request setURL:[NSURL URLWithString:newURL]];
     [request setHTTPMethod:@"POST"];
