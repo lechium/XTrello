@@ -138,17 +138,11 @@ static XTrello *XTrelloSharedPlugin;
             
             
             NSMenuItem *actionMenuItem = [[NSMenuItem alloc] initWithTitle:@"Show Trello boards" action:@selector(showTrelloWindow) keyEquivalent:@"t"];
-            [actionMenuItem setKeyEquivalentModifierMask:NSControlKeyMask];
+            [actionMenuItem setKeyEquivalentModifierMask:NSControlKeyMask | NSShiftKeyMask];
             [actionMenuItem setTarget:self];
             //[[menuItem submenu] addItem:actionMenuItem];
             [trelloMenu addItem:actionMenuItem];
-          
-            //removing this menu item because its nothing but trouble
-            //if the trello window hasnt been shown it breaks the board array controller
-            //if it IS showing it doesn't know which project is current because of our key window has no
-            //window controller that xcode is actually familiar with.
-            
-            
+   
             NSMenuItem *trelloItem = [[NSMenuItem alloc] initWithTitle:@"Add Card to Trello..." action:@selector(addNewCard:) keyEquivalent:@"c"];
             [trelloItem setKeyEquivalentModifierMask:NSControlKeyMask];
             [trelloItem setTarget:self.windowController];
