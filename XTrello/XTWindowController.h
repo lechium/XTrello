@@ -16,6 +16,9 @@
 
 - (void)removeItemForWindowTag:(NSInteger)windowTag;
 - (void)addItemForWindowTag:(NSInteger)windowTag;
+- (void)setPreviousWindowController:(NSWindowController *)windowController;
+- (NSArray *)trelloBoardArray;
+
 @end
 
 @interface XTWindowController : NSWindowController <XTTrelloCardViewDelegate, NSWindowDelegate>

@@ -353,6 +353,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="l60-jN-1Uc"/>
             </connections>
+            <point key="canvasLocation" x="-17" y="586"/>
         </window>
         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Tja-uM-kEK">
             <rect key="frame" x="0.0" y="0.0" width="82" height="17"/>

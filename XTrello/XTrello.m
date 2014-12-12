@@ -48,6 +48,16 @@ static XTrello *XTrelloSharedPlugin;
 
 @implementation XTrello
 
++ (NSWindowController *)prevWindowController
+{
+    return [XTrelloSharedPlugin previousWindowController];
+}
+
+- (NSArray *)trelloBoardArray
+{
+    NSDictionary *boards = [self.trelloData objectForKey:@"boards"];
+    return [self boardDictionaryToArray:boards];
+}
 
 + (void)initialize
 {
@@ -132,10 +142,18 @@ static XTrello *XTrelloSharedPlugin;
             [actionMenuItem setTarget:self];
             //[[menuItem submenu] addItem:actionMenuItem];
             [trelloMenu addItem:actionMenuItem];
-            NSMenuItem *trelloItem = [[NSMenuItem alloc] initWithTitle:@"Add Card to Trello..." action:@selector(newCardFromMenu:) keyEquivalent:@"c"];
+          
+            //removing this menu item because its nothing but trouble
+            //if the trello window hasnt been shown it breaks the board array controller
+            //if it IS showing it doesn't know which project is current because of our key window has no
+            //window controller that xcode is actually familiar with.
+            
+            
+            NSMenuItem *trelloItem = [[NSMenuItem alloc] initWithTitle:@"Add Card to Trello..." action:@selector(addNewCard:) keyEquivalent:@"c"];
             [trelloItem setKeyEquivalentModifierMask:NSControlKeyMask];
             [trelloItem setTarget:self.windowController];
             [trelloMenu addItem:trelloItem];
+            
             NSMenuItem *boardItem = [[NSMenuItem alloc] initWithTitle:@"Create Board for Current Project..." action:@selector(createBoardForCurrentProject) keyEquivalent:@""];
             [boardItem setTarget:self];
             [trelloMenu addItem:boardItem];
@@ -259,13 +277,21 @@ static XTrello *XTrelloSharedPlugin;
 - (void)setInitialData:(NSDictionary *)theData
 {
     LOG_SELF;
-    trelloData = theData;
+    self.trelloData = theData;
     NSDictionary *boards = [theData objectForKey:@"boards"];
     NSArray *boardArray = [self boardDictionaryToArray:boards];
     [self.windowController setBoardArrayContent:boardArray];
-    NSString *boardName = [[boardArray objectAtIndex:0] valueForKey:@"name"];
-    NSLog(@"boardName: %@", boardName);
-    [self.windowController selectBoardNamed:boardName];
+    NSString *projectName = [XTModel currentProjectName];
+   // NSLog(@"### board array: %@", boardArray);
+    if (projectName == nil)
+    {
+        projectName = [[boardArray objectAtIndex:0] valueForKey:@"name"];
+    }
+    
+    [self.windowController selectBoardNamed:projectName];
+    // NSString *boardName = [[boardArray objectAtIndex:0] valueForKey:@"name"];
+   // NSLog(@"boardName: %@", boardName);
+   // [self.windowController selectBoardNamed:boardName];
 }
 
 //how we set whether the menu items are avail or not.
@@ -338,9 +364,10 @@ static XTrello *XTrelloSharedPlugin;
     
     
     trelloReady = TRUE;
-    trelloData = theData;
+    self.trelloData = theData;
     [self.windowController dataReloaded];
 }
+
 
 - (NSArray *)boardDictionaryToArray:(NSDictionary *)boardDict
 {
@@ -358,7 +385,7 @@ static XTrello *XTrelloSharedPlugin;
 - (void)trelloDataFetched:(NSDictionary *)theData
 {
     trelloReady = TRUE;
-    trelloData = theData;
+    self.trelloData = theData;
     NSDictionary *boards = [theData objectForKey:@"boards"];
     NSArray *boardArray = [self boardDictionaryToArray:boards];
      if (self.windowController == nil) {
@@ -488,9 +515,9 @@ static XTrello *XTrelloSharedPlugin;
             self.windowController = wc;
             wc.delegate = self;
         }
-        if (trelloData != nil)
+        if (self.trelloData != nil)
         {
-            NSDictionary *boards = [trelloData objectForKey:@"boards"];
+            NSDictionary *boards = [self.trelloData objectForKey:@"boards"];
             NSArray *boardArray = [self boardDictionaryToArray:boards];
             [self.windowController setBoardArrayContent:boardArray];
         }
@@ -504,7 +531,9 @@ static XTrello *XTrelloSharedPlugin;
         
         NSString *projectName = [XTModel currentProjectName];
         NSLog(@"projectname: %@", projectName);
+        self.previousWindowController = [[NSApp mainWindow] windowController];
         [self.windowController.window makeKeyAndOrderFront:nil];
+      //  [self.windowController.window orderFrontRegardless];
         
         NSMenuItem *menuItem = [[NSApp mainMenu] itemWithTitle:@"Window"];
         if (menuItem) {
@@ -533,11 +562,14 @@ static XTrello *XTrelloSharedPlugin;
 
 - (void)showBrowserWindow
 {
+    self.previousWindowController = [[NSApp mainWindow] windowController];
     [self.windowController.windowTwo makeKeyAndOrderFront:nil];
 }
 
 - (void)showXtrelloWindow
 {
+    self.previousWindowController = [[NSApp mainWindow] windowController];
+    //[self.windowController.window orderFrontRegardless];
     [self.windowController.window makeKeyAndOrderFront:nil];
 }
 

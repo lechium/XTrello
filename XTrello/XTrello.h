@@ -19,11 +19,16 @@
     NSString *baseURL;
     NSString *apiKey;
     BOOL trelloReady;
-    NSDictionary *trelloData;
+  //  NSDictionary *trelloData;
     NSMenuItem *xtrelloWindowMenuItem;
     NSMenuItem *xtrelloBrowserWindowMenuItem;
     NSTimer *refreshTimer;
+    
 }
 
+@property (nonatomic, strong) NSDictionary *trelloData;
+@property (nonatomic, strong) NSWindowController *previousWindowController;
 
++ (NSWindowController *)prevWindowController;
+- (NSArray *)trelloBoardArray;
 @end

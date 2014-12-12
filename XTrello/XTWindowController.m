@@ -568,6 +568,25 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
 
 - (IBAction)addNewCard:(id)sender
 {
+    if (![self.window isVisible])
+    {
+        //if you are adding the card from the main menu item the window might not be visible
+        
+        if ([boardArrayController.content count] == 0)
+        {
+            [self setBoardArrayContent:[self.delegate trelloBoardArray]];
+        }
+        if (![currentBoard isEqualToString:[self currentProjectName]])
+        {
+            currentBoard = [self currentProjectName];
+            [self selectBoardNamed:currentBoard];
+        }
+    
+        [self.delegate setPreviousWindowController:[[NSApp mainWindow] windowController]];
+        [self.window makeKeyAndOrderFront:nil];
+        
+    }
+
     NSInteger newCardCount = [currentCardList count];
     editingRow = newCardCount;
     [[XTTrelloWrapper sharedInstance] addCardToBoard:currentBoard inList:currentList withName:@"New Note"];
@@ -622,6 +641,16 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
 
 - (void)newCardFromMenu:(id)sender
 {
+    if (![self.window isVisible])
+    {
+        if (boardArrayController.content == nil)
+        {
+            [self setBoardArrayContent:[self.delegate trelloBoardArray]];
+        }
+        
+        [self.delegate setPreviousWindowController:[[NSApp mainWindow] windowController]];
+        [self.window makeKeyAndOrderFront:nil];
+    }
     NSString *fileName = [self currentSourceFileName];
     NSString *fileDesc = [NSString stringWithFormat:@"%@:%li", fileName, self.selectedLineNumber];
     PBXFileReference *currentSourceFile = [self currentSourceFile];
@@ -631,7 +660,7 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
     
     if (theBoard == nil || currentSourceFile == nil)
     {
-        NSLog(@"DEM CATZ BE NIL, TRY AGAIN!!");
+        //this only seemed to happen when we created item from main menu, which doesn't call here anymore.
         return;
     }
     // NSLog(@"path: %@ absPath: %@", currentSourceFile.path, currentSourceFile.absolutePath );

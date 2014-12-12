@@ -12,10 +12,11 @@
 //#import "XToDoPreferencesWindowController.h"
 
 #import "NSData+Split.h"
+#import "XTrello.h"
 
 static NSBundle *pluginBundle;
 
-@class XTrello;
+//@class XTrello;
 @implementation XTModel
 
 + (NSString *)applicationSupportFolder
@@ -83,6 +84,12 @@ static NSBundle *pluginBundle;
 
 + (IDEWorkspaceTabController*)tabController{
     NSWindowController *currentWindowController = [[NSApp keyWindow] windowController];
+    
+    if ([currentWindowController isKindOfClass:NSClassFromString(@"XTWindowController")])
+    {
+        currentWindowController = [XTrello prevWindowController];
+    }
+    
     if ([currentWindowController isKindOfClass:NSClassFromString(@"IDEWorkspaceWindowController")]) {
         IDEWorkspaceWindowController *workspaceController = (IDEWorkspaceWindowController *)currentWindowController;
         
@@ -93,6 +100,12 @@ static NSBundle *pluginBundle;
 
 + (id)currentEditor {
     NSWindowController *currentWindowController = [[NSApp mainWindow] windowController];
+    
+    if ([currentWindowController isKindOfClass:NSClassFromString(@"XTWindowController")])
+    {
+        currentWindowController = [XTrello prevWindowController];
+    }
+    
     if ([currentWindowController isKindOfClass:NSClassFromString(@"IDEWorkspaceWindowController")]) {
         IDEWorkspaceWindowController *workspaceController = (IDEWorkspaceWindowController *)currentWindowController;
         IDEEditorArea *editorArea = [workspaceController editorArea];
@@ -103,7 +116,13 @@ static NSBundle *pluginBundle;
 }
 + (IDEWorkspaceDocument *)currentWorkspaceDocument {
     NSWindowController *currentWindowController = [[NSApp mainWindow] windowController];
-    NSLog(@"cwc: %@", [[NSApp keyWindow] windowController]);
+    NSLog(@"cwc: %@", currentWindowController);
+    
+    if ([currentWindowController isKindOfClass:NSClassFromString(@"XTWindowController")])
+    {
+        currentWindowController = [XTrello prevWindowController];
+    }
+    
     id document = [currentWindowController document];
     if (currentWindowController && [document isKindOfClass:NSClassFromString(@"IDEWorkspaceDocument")]) {
         return (IDEWorkspaceDocument *)document;
