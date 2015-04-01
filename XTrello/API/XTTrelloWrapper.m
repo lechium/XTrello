@@ -250,6 +250,9 @@
 {
 
     NSMutableDictionary *boardDict = [[self boardNamed:boardName] mutableCopy];
+    
+    if (boardDict == nil) return nil;
+    
     NSMutableArray *cards = [[boardDict valueForKey:@"cards"] mutableCopy];
     NSDictionary *newCard = [[self createCardWithName:cardName toListWithName:listName inBoardNamed:boardName] objectForKey:@"response"];
     if (thePosition == nil || [thePosition isEqualToString:@"bottom"])

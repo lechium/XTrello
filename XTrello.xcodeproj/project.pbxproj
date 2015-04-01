@@ -375,8 +375,8 @@
 		3264F50619744CF700E9E1B6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer: Kevin Bradley (7PKGTC4Q8M)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Kevin Bradley (7PKGTC4Q8M)";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = "$(HOME)";
@@ -385,7 +385,7 @@
 				INFOPLIST_FILE = "XTrello/XTrello-Info.plist";
 				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "BF107E5A-C81F-4AD3-BE42-C1E46A34224C";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = xcplugin;
 			};
 			name = Debug;

@@ -587,9 +587,27 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
         
     }
 
+    if (currentBoard == nil)
+    {
+    
+        NSAlert *theAlert = [NSAlert alertWithMessageText:@"Error" defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:@"Couldn't determine the current project, please try again"];
+        
+        [theAlert runModal];
+        return;
+        
+    }
+    
     NSInteger newCardCount = [currentCardList count];
     editingRow = newCardCount;
-    [[XTTrelloWrapper sharedInstance] addCardToBoard:currentBoard inList:currentList withName:@"New Note"];
+    id theData = [[XTTrelloWrapper sharedInstance] addCardToBoard:currentBoard inList:currentList withName:@"New Note"];
+    if (theData == nil)
+    {
+        NSAlert *theAlert = [NSAlert alertWithMessageText:@"Error" defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:@"An error occured adding the card, please try again"];
+        
+        [theAlert runModal];
+        return;
+        
+    }
     [self populateCardsFromListNamed:currentList inBoard:currentBoard];
     float y =  listTableView.frame.size.height - [[listTableView enclosingScrollView] contentView].frame.size.height ;
     [[[listTableView enclosingScrollView] verticalScroller] setFloatValue:0.0];
