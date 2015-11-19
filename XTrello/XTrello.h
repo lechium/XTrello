@@ -23,6 +23,7 @@
     NSMenuItem *xtrelloWindowMenuItem;
     NSMenuItem *xtrelloBrowserWindowMenuItem;
     NSTimer *refreshTimer;
+    BOOL menuAdded;
     
 }
 

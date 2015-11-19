@@ -18,7 +18,7 @@
     {
         if (![currentColor respondsToSelector:@selector(allKeys)])return nil;
         
-        [newArray addObject:[currentColor key]];
+        //[newArray addObject:[currentColor key]];
         
     }
     

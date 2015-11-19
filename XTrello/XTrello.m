@@ -109,12 +109,142 @@ static XTrello *XTrelloSharedPlugin;
     }
 }
 
+- (void)addOurMenus
+{
+    if (menuAdded == true ){
+        return;
+    }
+    NSMenuItem *menuItem = [[NSApp mainMenu] itemWithTitle:@"View"];
+    
+    if (menuItem) {
+        [[menuItem submenu] addItem:[NSMenuItem separatorItem]];
+        
+        NSMenuItem *trelloMenuItem = [[NSMenuItem alloc] init];
+        [trelloMenuItem setTitle:@"Trello"];
+        
+        NSMenu *trelloMenu = [[NSMenu alloc] initWithTitle:@""];
+        
+        
+        NSMenuItem *actionMenuItem = [[NSMenuItem alloc] initWithTitle:@"Show Trello boards" action:@selector(showTrelloWindow) keyEquivalent:@"t"];
+        [actionMenuItem setKeyEquivalentModifierMask:NSControlKeyMask | NSShiftKeyMask];
+        [actionMenuItem setTarget:self];
+        //[[menuItem submenu] addItem:actionMenuItem];
+        [trelloMenu addItem:actionMenuItem];
+        
+        NSMenuItem *trelloItem = [[NSMenuItem alloc] initWithTitle:@"Add Card to Trello..." action:@selector(addNewCard:) keyEquivalent:@"c"];
+        [trelloItem setKeyEquivalentModifierMask:NSControlKeyMask];
+        [trelloItem setTarget:self.windowController];
+        [trelloMenu addItem:trelloItem];
+        
+        NSMenuItem *boardItem = [[NSMenuItem alloc] initWithTitle:@"Create Board for Current Project..." action:@selector(createBoardForCurrentProject) keyEquivalent:@""];
+        [boardItem setTarget:self];
+        [trelloMenu addItem:boardItem];
+        
+        [trelloMenuItem setSubmenu:trelloMenu];
+        [[menuItem submenu] addItem:trelloMenuItem];
+        menuAdded = true;
+    }
+}
+
+- (void)delayedSetup
+{
+    NSMenuItem *menuItem = [[NSApp mainMenu] itemWithTitle:@"View"];
+    if (menuItem) {
+        [[menuItem submenu] addItem:[NSMenuItem separatorItem]];
+        
+        NSMenuItem *trelloMenuItem = [[NSMenuItem alloc] init];
+        [trelloMenuItem setTitle:@"Trello"];
+        
+        NSMenu *trelloMenu = [[NSMenu alloc] initWithTitle:@""];
+        
+        
+        NSMenuItem *actionMenuItem = [[NSMenuItem alloc] initWithTitle:@"Show Trello boards" action:@selector(showTrelloWindow) keyEquivalent:@"t"];
+        [actionMenuItem setKeyEquivalentModifierMask:NSControlKeyMask | NSShiftKeyMask];
+        [actionMenuItem setTarget:self];
+        //[[menuItem submenu] addItem:actionMenuItem];
+        [trelloMenu addItem:actionMenuItem];
+        
+        NSMenuItem *trelloItem = [[NSMenuItem alloc] initWithTitle:@"Add Card to Trello..." action:@selector(addNewCard:) keyEquivalent:@"c"];
+        [trelloItem setKeyEquivalentModifierMask:NSControlKeyMask];
+        [trelloItem setTarget:self.windowController];
+        [trelloMenu addItem:trelloItem];
+        
+        NSMenuItem *boardItem = [[NSMenuItem alloc] initWithTitle:@"Create Board for Current Project..." action:@selector(createBoardForCurrentProject) keyEquivalent:@""];
+        [boardItem setTarget:self];
+        [trelloMenu addItem:boardItem];
+        
+        [trelloMenuItem setSubmenu:trelloMenu];
+        [[menuItem submenu] addItem:trelloMenuItem];
+    }
+    
+    Class sourceTextClass = NSClassFromString(@"IDESourceCodeEditor");
+    
+    
+    static dispatch_once_t onceToken2;
+    Method sourceSetupContextMenu = class_getInstanceMethod(sourceTextClass, @selector(setupTextViewContextMenuWithMenu:));
+    
+    if (!sourceSetupContextMenu)
+    {
+        NSLog(@"XTRELLO: WHAT THE FARKWAT???? ITS NOT THERE YET!");
+        return;
+    }
+    
+    dispatch_once(&onceToken2, ^{
+        
+        
+        // get the class definition responsible for populating the context menu
+        
+        
+        /*
+         
+         sample update science.
+         
+         first attempt to shoehorn in was unsuccessful, originalTextView:menu:forEvent:atIndex:) appears to be called before setupTextViewContextMenuWithMenu
+         where the real magic happens,
+         
+         add the newTextView:menu:forEvent:atIndex: method on self as a method on the IDESourceCodeEditor class, but name it newTextView:menu:forEvent:atIndex:
+         
+         */
+        /*
+         Method ourMenuForEvent = class_getInstanceMethod([self class], @selector(newTextView:menu:forEvent:atIndex:));
+         class_addMethod(sourceTextClass, @selector(originalTextView:menu:forEvent:atIndex:), method_getImplementation(ourMenuForEvent), method_getTypeEncoding(ourMenuForEvent));
+         
+         // swap the textView:menu:forEvent:atIndex: and newTextView:menu:forEvent:atIndex: methods on IDESourceCodeEditor
+         Method themeFrameDrawRect = class_getInstanceMethod(sourceTextClass, @selector(textView:menu:forEvent:atIndex:));
+         Method themeFrameDrawRectOriginal = class_getInstanceMethod(sourceTextClass, @selector(originalTextView:menu:forEvent:atIndex:));
+         method_exchangeImplementations(themeFrameDrawRect, themeFrameDrawRectOriginal);
+         
+         swizzling is dangerous and should only be used as a last resort!!!
+         
+         https://mikeash.com/pyblog/friday-qa-2010-01-29-method-replacement-for-fun-and-profit.html
+         
+         
+         
+         */
+        
+        
+        Method ourContextReplacement = class_getInstanceMethod([self class], @selector(XTSetupTextViewContextMenuWithMenu:));
+        class_addMethod(sourceTextClass, @selector(originalSetupTextViewContextMenuWithMenu:), method_getImplementation(ourContextReplacement), method_getTypeEncoding(ourContextReplacement));
+        
+        
+        Method sourceSetupContextOriginal = class_getInstanceMethod(sourceTextClass, @selector(originalSetupTextViewContextMenuWithMenu:));
+        method_exchangeImplementations(sourceSetupContextMenu, sourceSetupContextOriginal);
+        
+        
+        //if we dont add our methods to IDESourceCodeEditor our menu items are disabled and useless.
+        
+        //    Method itsScience = class_getInstanceMethod([self class], @selector(itsScience:));
+        
+        //  class_addMethod(sourceTextClass, @selector(itsScience:), method_getImplementation(itsScience), method_getTypeEncoding(itsScience));
+    });
+}
+
 - (id)initWithBundle:(NSBundle *)plugin
 {
     if (self = [super init]) {
         // reference to plugin's bundle, for resource acccess
         self.bundle = plugin;
-        
+        menuAdded = false;
         // Create menu items, initialize UI, etc.
 
        // NSLog(@"dataStoreFile: %@", [XTModel boardsDataStoreFile]);
@@ -127,34 +257,7 @@ static XTrello *XTrelloSharedPlugin;
             
         }
         
-        NSMenuItem *menuItem = [[NSApp mainMenu] itemWithTitle:@"View"];
-        if (menuItem) {
-            [[menuItem submenu] addItem:[NSMenuItem separatorItem]];
-            
-            NSMenuItem *trelloMenuItem = [[NSMenuItem alloc] init];
-            [trelloMenuItem setTitle:@"Trello"];
-            
-            NSMenu *trelloMenu = [[NSMenu alloc] initWithTitle:@""];
-            
-            
-            NSMenuItem *actionMenuItem = [[NSMenuItem alloc] initWithTitle:@"Show Trello boards" action:@selector(showTrelloWindow) keyEquivalent:@"t"];
-            [actionMenuItem setKeyEquivalentModifierMask:NSControlKeyMask | NSShiftKeyMask];
-            [actionMenuItem setTarget:self];
-            //[[menuItem submenu] addItem:actionMenuItem];
-            [trelloMenu addItem:actionMenuItem];
-   
-            NSMenuItem *trelloItem = [[NSMenuItem alloc] initWithTitle:@"Add Card to Trello..." action:@selector(addNewCard:) keyEquivalent:@"c"];
-            [trelloItem setKeyEquivalentModifierMask:NSControlKeyMask];
-            [trelloItem setTarget:self.windowController];
-            [trelloMenu addItem:trelloItem];
-            
-            NSMenuItem *boardItem = [[NSMenuItem alloc] initWithTitle:@"Create Board for Current Project..." action:@selector(createBoardForCurrentProject) keyEquivalent:@""];
-            [boardItem setTarget:self];
-            [trelloMenu addItem:boardItem];
-            
-            [trelloMenuItem setSubmenu:trelloMenu];
-            [[menuItem submenu] addItem:trelloMenuItem];
-        }
+       
         XTTrelloWrapper *trelloInst = [XTTrelloWrapper sharedInstance];
         
         [trelloInst setApiKey:[[NSUserDefaults standardUserDefaults]objectForKey:kXTrelloAPIKey]];
@@ -164,56 +267,7 @@ static XTrello *XTrelloSharedPlugin;
         [trelloInst loadPreviousData];
         
         [trelloInst fetchTrelloData];
-    
-        static dispatch_once_t onceToken2;
-        dispatch_once(&onceToken2, ^{
-            
-            
-            // get the class definition responsible for populating the context menu
-            
-            Class sourceTextClass = NSClassFromString(@"IDESourceCodeEditor");
-            
-            /* 
-             
-             sample update science.
-             
-             first attempt to shoehorn in was unsuccessful, originalTextView:menu:forEvent:atIndex:) appears to be called before setupTextViewContextMenuWithMenu
-             where the real magic happens,
-             
-             add the newTextView:menu:forEvent:atIndex: method on self as a method on the IDESourceCodeEditor class, but name it newTextView:menu:forEvent:atIndex:
-             
-             */
-            /*
-            Method ourMenuForEvent = class_getInstanceMethod([self class], @selector(newTextView:menu:forEvent:atIndex:));
-            class_addMethod(sourceTextClass, @selector(originalTextView:menu:forEvent:atIndex:), method_getImplementation(ourMenuForEvent), method_getTypeEncoding(ourMenuForEvent));
-            
-            // swap the textView:menu:forEvent:atIndex: and newTextView:menu:forEvent:atIndex: methods on IDESourceCodeEditor
-            Method themeFrameDrawRect = class_getInstanceMethod(sourceTextClass, @selector(textView:menu:forEvent:atIndex:));
-            Method themeFrameDrawRectOriginal = class_getInstanceMethod(sourceTextClass, @selector(originalTextView:menu:forEvent:atIndex:));
-            method_exchangeImplementations(themeFrameDrawRect, themeFrameDrawRectOriginal);
-            
-             swizzling is dangerous and should only be used as a last resort!!!
-             
-             https://mikeash.com/pyblog/friday-qa-2010-01-29-method-replacement-for-fun-and-profit.html
-             
-             
-             
-            */
-            
-            Method ourContextReplacement = class_getInstanceMethod([self class], @selector(XTSetupTextViewContextMenuWithMenu:));
-            class_addMethod(sourceTextClass, @selector(originalSetupTextViewContextMenuWithMenu:), method_getImplementation(ourContextReplacement), method_getTypeEncoding(ourContextReplacement));
-            
-            Method sourceSetupContextMenu = class_getInstanceMethod(sourceTextClass, @selector(setupTextViewContextMenuWithMenu:));
-            Method sourceSetupContextOriginal = class_getInstanceMethod(sourceTextClass, @selector(originalSetupTextViewContextMenuWithMenu:));
-            method_exchangeImplementations(sourceSetupContextMenu, sourceSetupContextOriginal);
-            
-            
-            //if we dont add our methods to IDESourceCodeEditor our menu items are disabled and useless.
-            
-        //    Method itsScience = class_getInstanceMethod([self class], @selector(itsScience:));
-            
-          //  class_addMethod(sourceTextClass, @selector(itsScience:), method_getImplementation(itsScience), method_getTypeEncoding(itsScience));
-        });
+       
         
         NSUserDefaults* prefs = [NSUserDefaults standardUserDefaults];
         
@@ -234,6 +288,7 @@ static XTrello *XTrelloSharedPlugin;
         
         
     }
+    [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(delayedSetup) userInfo:nil repeats:FALSE];
     return self;
 }
 
@@ -317,8 +372,8 @@ static XTrello *XTrelloSharedPlugin;
         [theMenu insertItem:trelloItem atIndex:10];
     }
    
-   // NSLog(@"orig: %@", orig);
-   // NSLog(@"setupTextViewContextMenuWithMenu: %@", arg1);
+    //NSLog(@"orig: %@", orig);
+    NSLog(@"setupTextViewContextMenuWithMenu: %@", arg1);
     
    
 }
@@ -432,6 +487,7 @@ static XTrello *XTrelloSharedPlugin;
 - (void)refresh:(id)sender
 {
     LOG_SELF;
+   // [self addOurMenus];
     if ([[UD valueForKey:kXTrelloAuthToken] length] > 0 && [[UD valueForKey:kXTrelloAPIKey] length] > 0 )
         [[XTTrelloWrapper sharedInstance] reloadTrelloData];
     else
@@ -441,6 +497,7 @@ static XTrello *XTrelloSharedPlugin;
 - (void)setupRefreshTimer
 {
     LOG_SELF;
+    [self addOurMenus];
     if (refreshTimer != nil)
     {
         [refreshTimer invalidate];
