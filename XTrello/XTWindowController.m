@@ -691,14 +691,20 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
     
     NSString *newDesc = [NSString stringWithFormat:@"%@\nbranch:%@\nline:%li\n%@", [currentSourceFile.absolutePath tildePath], currentBranch, self.selectedLineNumber, self.focalText];
  
-    
+    //make sure the board exists first, if it does not, create it!
+    if ([[XTTrelloWrapper sharedInstance] boardNamed:theBoard] == nil)
+    {
+        NSLog(@"the board doesnt exist yet: %@ create it!", theBoard);
+        NSString *orgName = [[XTTrelloWrapper sharedInstance] firstOrganizationName];
+        [[XTTrelloWrapper sharedInstance] createNewTemplateBoardWithName:theBoard inOrganization:orgName];
+    }
+
     [[XTTrelloWrapper sharedInstance] addCardToBoard:theBoard inList:[self firstListName] withName:fileDesc withDescription:newDesc];
     [self populateCardsFromListNamed:currentList inBoard:currentBoard];
     if(!self.window.isVisible)
     {
         [self.window makeKeyAndOrderFront:nil];
     }
-    
     [self selectBoardNamed:theBoard];
 
     float y =  listTableView.frame.size.height - [[listTableView enclosingScrollView] contentView].frame.size.height ;
