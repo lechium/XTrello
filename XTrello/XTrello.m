@@ -117,6 +117,13 @@ static XTrello *XTrelloSharedPlugin;
     NSMenuItem *menuItem = [[NSApp mainMenu] itemWithTitle:@"View"];
     
     if (menuItem) {
+        
+        if ([[menuItem submenu] indexOfItemWithTitle:@"Trello"] != NSNotFound)
+        {
+            NSLog(@"trello menu item already exists! bail!");
+            return;
+        }
+        
         [[menuItem submenu] addItem:[NSMenuItem separatorItem]];
         
         NSMenuItem *trelloMenuItem = [[NSMenuItem alloc] init];
