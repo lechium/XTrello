@@ -53,7 +53,7 @@
 
     NSDictionary *cardDict = [currentCardList objectAtIndex:rowNumber];
     NSURLRequest *theRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:cardDict[@"shortUrl"]]];
-   // NSLog(@"theRequest: %@", theRequest);
+    NSLog(@"theRequest: %@", theRequest);
     [[webView mainFrame] loadRequest:theRequest];
     [windowTwo makeKeyAndOrderFront:nil];
     [[self delegate] addItemForWindowTag:2];
