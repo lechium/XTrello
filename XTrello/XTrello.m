@@ -427,6 +427,7 @@ static XTrello *XTrelloSharedPlugin;
 
 - (NSArray *)boardDictionaryToArray:(NSDictionary *)boardDict
 {
+    
     NSEnumerator *theEnum = [boardDict objectEnumerator];
     NSMutableArray *boardArray = [NSMutableArray new];
     id theObject = nil;
@@ -435,7 +436,10 @@ static XTrello *XTrelloSharedPlugin;
         [boardArray addObject:theObject];
     }
   //  NSLog(@"boardArray: %@", boardArray);
-    return boardArray;
+    NSSortDescriptor *sortDesc = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:TRUE];
+    
+    // return [filteredArray sortedArrayUsingDescriptors:@[sortDesc]];
+    return [boardArray sortedArrayUsingDescriptors:@[sortDesc]];
 }
 
 - (void)trelloDataFetched:(NSDictionary *)theData

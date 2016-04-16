@@ -1047,10 +1047,29 @@
         }
         NSMutableDictionary *meEditable = [jsonMe mutableCopy];
       
+        NSMutableArray *boardNames = [NSMutableArray new];
+        
         //its possible there are no organizations, if there isn't certain functionality wont work.
         if ([orgArray count] > 0)
         {
             [meEditable setObject:orgArray forKey:@"organizations"];
+            
+            NSMutableArray *moreBoards = [jsonBoards mutableCopy];
+            
+            
+            for (NSDictionary *org in orgArray)
+            {
+                NSString *orgID = org[@"id"];
+                NSString *displayName = org[@"displayName"];
+                NSString *boards2 = [NSString stringWithFormat:@"%@/organizations/%@/boards?filter=all&key=%@&token=%@", baseURL,orgID, apiKey, sessionToken];
+               // NSLog(@"boards2: %@", boards2);
+                NSArray *jsonBoards2 = (NSArray *)[self dictionaryFromURLString:boards2];
+                //NSLog(@"jsonBoards2: %@ for org: %@", jsonBoards2,displayName);
+                [moreBoards addObjectsFromArray:jsonBoards2];
+                
+            }
+            jsonBoards = moreBoards;
+            
         }
         
         //the fetch for boards above will get ALL of them, open AND closed, we want to only add the open ones
@@ -1060,11 +1079,14 @@
         {
             //ignore any closed boards.
             
-            if ([currentBoard[@"closed"] boolValue] == FALSE)
+            NSString *name = [currentBoard objectForKey:@"name"];
+            
+            
+            if ([currentBoard[@"closed"] boolValue] == FALSE && ![boardNames containsObject:name])
             {
                 NSMutableDictionary *newBoard = [currentBoard mutableCopy];
                 NSString *boardID = [currentBoard objectForKey:@"id"];
-                NSString *name = [currentBoard objectForKey:@"name"];
+                [boardNames addObject:name];
                 NSString *currentLabelNamesURL = [NSString stringWithFormat:@"%@/boards/%@/labelNames?key=%@&token=%@", baseURL, boardID, apiKey, sessionToken];
              
                 //the board data fetch above USED to get all our label info, doesn't appear to fetch it properly anymore
@@ -1117,6 +1139,11 @@
 
             }
         }
+        
+       // NSSortDescriptor *sortDesc = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:TRUE];
+        
+       // return [filteredArray sortedArrayUsingDescriptors:@[sortDesc]];
+        
         [trelloDict setObject:updatedBoards forKey:@"boards"];
         [trelloDict setObject:meEditable forKey:@"me"];
         
