@@ -18,6 +18,7 @@
     NSMenu *context;
     NSMenu *listsMenu;
     NSMenu *memberListMenu;
+    NSMenu *boardsMenu;
 }
 @property (nonatomic, weak) IBOutlet NSTextField *titleView;
 @property (nonatomic, strong) XTTagViewController *tagViewController;
@@ -39,6 +40,8 @@
 
 @protocol XTTrelloCardViewDelegate <NSObject>
 
+- (NSArray *)boardNames;
+- (NSArray *)boardArray;
 - (void)jumpToCode:(NSDictionary *)codeDict;
 - (void)populateCardsFromListNamed:(NSString *)listName inBoard:(NSString *)boardName;
 - (void)addNewCard:(id)sender;

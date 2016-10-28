@@ -8,6 +8,57 @@
 
 #import "XTrello.h"
 #import <objc/runtime.h>
+#import "PureLayout.h"
+@interface ScienceView: NSView
+
+@end
+
+@implementation ScienceView
+
+- (void)drawRect:(NSRect)dirtyRect
+{
+    //  NSLog(@"drawRect");
+    [[NSColor blackColor] setFill];
+    NSRectFill(dirtyRect);
+    [super drawRect:dirtyRect];
+    
+}
+@end
+
+@interface NSView (recursion)
+
+- (NSView *)findFirstSubviewWithClass:(Class)theClass;
+- (void)printRecursiveDescription;
+- (id)_subtreeDescription;
+@end
+
+
+
+@implementation NSView (recursion)
+
+- (NSView *)findFirstSubviewWithClass:(Class)theClass {
+    
+    if ([self isKindOfClass:theClass]) {
+        return self;
+    }
+    
+    for (NSView *v in self.subviews) {
+        NSView *theView = [v findFirstSubviewWithClass:theClass];
+        if (theView != nil)
+        {
+            return theView;
+        }
+    }
+    return nil;
+}
+
+- (void)printRecursiveDescription
+{
+    NSString *desc = [self _subtreeDescription];
+    NSLog(@"desc: %@", desc);
+}
+
+@end
 
 @interface DVTCompletingTextView : NSTextView
 @end
@@ -155,6 +206,49 @@ static XTrello *XTrelloSharedPlugin;
 
 - (void)delayedSetup
 {
+    NSView *mainView = [[NSApp mainWindow] contentView];
+   
+   /*
+    //IDENavBar
+    NSView *navBar = [mainView findFirstSubviewWithClass:NSClassFromString(@"DVTTabBarEnclosureView")];
+    navBar.layer.backgroundColor = [NSColor redColor].CGColor;
+    NSLog(@"navbar: %@", navBar);
+    
+    if (navBar != nil)
+    {
+        NSRect theRect = navBar.frame;
+        theRect.origin.y+= theRect.size.height;
+        
+        Class vc = NSClassFromString(@"DVTLayoutView_ML");
+        
+        ScienceView *testView = [[ScienceView alloc]initForAutoLayout];
+        testView.layer.backgroundColor = [NSColor lightGrayColor].CGColor;
+        [navBar addSubview:testView positioned:NSWindowAbove relativeTo:nil];
+       
+        //  [navBar addSubview:testView];
+        [testView autoMatchDimension:ALDimensionHeight toDimension:ALDimensionHeight ofView:navBar];
+        [testView autoMatchDimension:ALDimensionWidth toDimension:ALDimensionWidth ofView:navBar];
+        [testView autoPinEdgesToSuperviewEdges];
+        //[testView autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:navBar];
+        NSTextField *textField = [[NSTextField alloc] initForAutoLayout];
+        textField.stringValue = @"MAKE XCODE GREAT AGAIN.m";
+        [testView addSubview:textField];
+        textField.drawsBackground = NO;
+        textField.bordered = NO;
+        textField.backgroundColor = NSColor.lightGrayColor;
+        textField.textColor = [NSColor whiteColor];
+        [textField autoAlignAxisToSuperviewAxis:ALAxisHorizontal];
+        [textField autoPinEdgeToSuperviewEdge:ALEdgeLeading withInset:5];
+        [textField autoMatchDimension:ALDimensionHeight toDimension:ALDimensionHeight ofView:navBar];
+        [textField autoMatchDimension:ALDimensionWidth toDimension:ALDimensionWidth ofView:navBar];
+        ///[textField autoSetDimension:ALDimensionWidth toSize:100];
+       // [textField setTextColor:NSColor.whiteColor];
+        [testView setNeedsDisplay:YES];
+        [testView displayIfNeeded];
+        //[navBar removeFromSuperview];
+         [navBar.superview printRecursiveDescription];
+    }
+    */
     NSMenuItem *menuItem = [[NSApp mainMenu] itemWithTitle:@"View"];
     if (menuItem) {
         [[menuItem submenu] addItem:[NSMenuItem separatorItem]];
@@ -196,6 +290,8 @@ static XTrello *XTrelloSharedPlugin;
         return;
     }
     
+    
+  //  [XTrello doNavbarScience];
     dispatch_once(&onceToken2, ^{
         
         
@@ -677,8 +773,9 @@ static XTrello *XTrelloSharedPlugin;
  
  */
 
-- (void)doNavbarScience
++ (void)doNavbarScience
 {
+    
    // id workspaceWindow = [[NSApplication sharedApplication] keyWindow]; //IDEWorkspaceWindow
     //id firstResponder = [workspaceWindow firstResponder]; //DVTSourceTextView
     //NSLog(@"firstResponder: %@", firstResponder);
@@ -688,7 +785,7 @@ static XTrello *XTrelloSharedPlugin;
     long long lineNumber = [sourceTextView _currentLineNumber];
     NSLog(@"line number: %lli", lineNumber);
     id editorContext = [sourceCodeEditor valueForKey:@"editorContext"]; //IDEEditorContext
-    //id navBar = [editorContext valueForKey:@"navBar"]; //IDENavBar
+    NSView *navBar = [editorContext valueForKey:@"navBar"]; //IDENavBar
     id coord = [editorContext valueForKey:@"_navigableItemCoordinator"]; //IDENavigableItemCoordinator
     NSHashTable *coordinatedItems = [coord valueForKey:@"_coordinatedItems"]; //NSHashTable of IDEKeyDrivenNavigableItem
     NSArray *menuArray = [coordinatedItems allObjects];

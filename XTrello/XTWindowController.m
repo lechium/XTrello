@@ -227,6 +227,23 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
     return [[lists objectAtIndex:0] valueForKey:@"name"];
 }
 
+- (NSArray *)boardArray
+{
+    return [boardArrayController arrangedObjects];
+}
+
+- (NSArray *)boardNames
+{
+    NSMutableArray *boards = [NSMutableArray new];
+    [[boardArrayController arrangedObjects] enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        [boards addObject:obj[@"name"]];
+        
+    } ];
+    
+    return boards;
+}
+
 - (int)boardCount
 {
     return [[boardArrayController arrangedObjects] count];
@@ -682,7 +699,7 @@ decisionListener:(id < WebPolicyDecisionListener >)listener
         //this only seemed to happen when we created item from main menu, which doesn't call here anymore.
         return;
     }
-    // NSLog(@"path: %@ absPath: %@", currentSourceFile.path, currentSourceFile.absolutePath );
+     NSLog(@"path: %@ absPath: %@", currentSourceFile.path, currentSourceFile.absolutePath );
     NSString *currentBranch = [XTModel currentGITBranch];
     if (currentBranch == nil)
         currentBranch = @"";

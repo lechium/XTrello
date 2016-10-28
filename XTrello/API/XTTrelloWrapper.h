@@ -43,6 +43,11 @@ static NSString *const TFeatureLabel       =        @"feature";
 @property (nonatomic, weak) id delegate;
 
 + (id)sharedInstance;
+
+- (NSDictionary *)moveCard:(NSDictionary *)theCard toBoardNamed:(NSString *)boardName;
+
+- (NSDictionary *)moveCard:(NSDictionary *)theCard fromBoardNamed:(NSString *)oldBoardName toBoardNamed:(NSString *)boardName toListNamed:(NSString *)listName;
+
 + (NSString *)UTCDateFromDate:(NSDate *)theDate;
 - (NSDictionary *)addCardToBoard:(NSString *)boardName inList:(NSString *)listName withName:(NSString *)cardName withDescription:(NSString *)theDescription;
 - (NSArray *)closedCardsInBoard:(NSString *)boardName;

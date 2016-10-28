@@ -29,6 +29,10 @@
 		32CFDAA919749C560008F69A /* NSData+Split.m in Sources */ = {isa = PBXBuildFile; fileRef = 32CFDAA819749C560008F69A /* NSData+Split.m */; };
 		32FEA9101975D02B008B3661 /* XTrelloItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 32FEA90F1975D02B008B3661 /* XTrelloItem.m */; };
 		895236941A21539000719E09 /* NSColor+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = 895236931A21539000719E09 /* NSColor+Hex.m */; };
+		89A7E8151DC330910047F32C /* NSMenuItem+boardDict.m in Sources */ = {isa = PBXBuildFile; fileRef = 89A7E8141DC330910047F32C /* NSMenuItem+boardDict.m */; };
+		89F378B71D827FF9008D36CF /* ALView+PureLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 89F378AF1D827FF9008D36CF /* ALView+PureLayout.m */; };
+		89F378B81D827FF9008D36CF /* NSArray+PureLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 89F378B11D827FF9008D36CF /* NSArray+PureLayout.m */; };
+		89F378B91D827FF9008D36CF /* NSLayoutConstraint+PureLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 89F378B31D827FF9008D36CF /* NSLayoutConstraint+PureLayout.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,6 +79,17 @@
 		32FEA90F1975D02B008B3661 /* XTrelloItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XTrelloItem.m; sourceTree = "<group>"; };
 		895236921A21539000719E09 /* NSColor+Hex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSColor+Hex.h"; sourceTree = "<group>"; };
 		895236931A21539000719E09 /* NSColor+Hex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSColor+Hex.m"; sourceTree = "<group>"; };
+		89A7E8131DC330910047F32C /* NSMenuItem+boardDict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMenuItem+boardDict.h"; sourceTree = "<group>"; };
+		89A7E8141DC330910047F32C /* NSMenuItem+boardDict.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMenuItem+boardDict.m"; sourceTree = "<group>"; };
+		89F378AE1D827FF9008D36CF /* ALView+PureLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALView+PureLayout.h"; sourceTree = "<group>"; };
+		89F378AF1D827FF9008D36CF /* ALView+PureLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALView+PureLayout.m"; sourceTree = "<group>"; };
+		89F378B01D827FF9008D36CF /* NSArray+PureLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+PureLayout.h"; sourceTree = "<group>"; };
+		89F378B11D827FF9008D36CF /* NSArray+PureLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+PureLayout.m"; sourceTree = "<group>"; };
+		89F378B21D827FF9008D36CF /* NSLayoutConstraint+PureLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSLayoutConstraint+PureLayout.h"; sourceTree = "<group>"; };
+		89F378B31D827FF9008D36CF /* NSLayoutConstraint+PureLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLayoutConstraint+PureLayout.m"; sourceTree = "<group>"; };
+		89F378B41D827FF9008D36CF /* PureLayout+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PureLayout+Internal.h"; sourceTree = "<group>"; };
+		89F378B51D827FF9008D36CF /* PureLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PureLayout.h; sourceTree = "<group>"; };
+		89F378B61D827FF9008D36CF /* PureLayoutDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PureLayoutDefines.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +120,8 @@
 				322B728719744F8900555109 /* NSString+trelloAdditions.m */,
 				322B728819744F8900555109 /* NSView+trelloAdditions.h */,
 				322B728919744F8900555109 /* NSView+trelloAdditions.m */,
+				89A7E8131DC330910047F32C /* NSMenuItem+boardDict.h */,
+				89A7E8141DC330910047F32C /* NSMenuItem+boardDict.m */,
 				322B728A19744F8900555109 /* XTMenuItem.h */,
 				322B728B19744F8900555109 /* XTMenuItem.m */,
 				322B728C19744F8900555109 /* XTTableView.h */,
@@ -167,6 +184,7 @@
 		3264F4F919744CF700E9E1B6 /* XTrello */ = {
 			isa = PBXGroup;
 			children = (
+				89F378AD1D827FF9008D36CF /* PureLayout */,
 				32979D111975991D0073F267 /* DataModel */,
 				322B729E19744FAB00555109 /* API */,
 				322B728119744F8900555109 /* Categories and Subclasses */,
@@ -202,6 +220,22 @@
 				32CFDAA419749C050008F69A /* XTProjectSetting.m */,
 			);
 			name = DataModel;
+			sourceTree = "<group>";
+		};
+		89F378AD1D827FF9008D36CF /* PureLayout */ = {
+			isa = PBXGroup;
+			children = (
+				89F378AE1D827FF9008D36CF /* ALView+PureLayout.h */,
+				89F378AF1D827FF9008D36CF /* ALView+PureLayout.m */,
+				89F378B01D827FF9008D36CF /* NSArray+PureLayout.h */,
+				89F378B11D827FF9008D36CF /* NSArray+PureLayout.m */,
+				89F378B21D827FF9008D36CF /* NSLayoutConstraint+PureLayout.h */,
+				89F378B31D827FF9008D36CF /* NSLayoutConstraint+PureLayout.m */,
+				89F378B41D827FF9008D36CF /* PureLayout+Internal.h */,
+				89F378B51D827FF9008D36CF /* PureLayout.h */,
+				89F378B61D827FF9008D36CF /* PureLayoutDefines.h */,
+			);
+			path = PureLayout;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -271,6 +305,8 @@
 				32FEA9101975D02B008B3661 /* XTrelloItem.m in Sources */,
 				322B728F19744F8900555109 /* NSDictionary+trelloAdditions.m in Sources */,
 				3264F50119744CF700E9E1B6 /* XTrello.m in Sources */,
+				89F378B81D827FF9008D36CF /* NSArray+PureLayout.m in Sources */,
+				89A7E8151DC330910047F32C /* NSMenuItem+boardDict.m in Sources */,
 				895236941A21539000719E09 /* NSColor+Hex.m in Sources */,
 				322B72A119744FAB00555109 /* XTTrelloWrapper.m in Sources */,
 				322B728E19744F8900555109 /* NSArray+trelloAdditions.m in Sources */,
@@ -280,9 +316,11 @@
 				32CFDAA619749C050008F69A /* XTProjectSetting.m in Sources */,
 				32871C05197831FF00277DEB /* NSDate+trelloAdditions.m in Sources */,
 				32CFDAA519749C050008F69A /* XTModel.m in Sources */,
+				89F378B91D827FF9008D36CF /* NSLayoutConstraint+PureLayout.m in Sources */,
 				32CFDAA919749C560008F69A /* NSData+Split.m in Sources */,
 				322B729219744F8900555109 /* XTMenuItem.m in Sources */,
 				322B729119744F8900555109 /* NSView+trelloAdditions.m in Sources */,
+				89F378B71D827FF9008D36CF /* ALView+PureLayout.m in Sources */,
 				322B729319744F8900555109 /* XTTableView.m in Sources */,
 				322B729D19744F9300555109 /* XTTrelloCardView.m in Sources */,
 			);

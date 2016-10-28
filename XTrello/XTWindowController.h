@@ -64,4 +64,6 @@
 - (IBAction)showPreferences:(id)sender;
 - (IBAction)refresh:(id)sender;
 - (void)dataReloaded;
+- (NSArray *)boardNames;
+- (NSArray *)boardArray;
 @end

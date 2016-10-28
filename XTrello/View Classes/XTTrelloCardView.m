@@ -9,7 +9,7 @@
 #import "XTTrelloCardView.h"
 #import "XTTrelloWrapper.h"
 #import "XTTagView.h"
-
+#import "NSMenuItem+boardDict.h"
 
 @implementation XTTrelloCardView
 
@@ -72,6 +72,21 @@
     [[self window] makeFirstResponder:self.titleView];
 }
 
+- (void)moveCardToBoard:(NSMenuItem *)sender
+{
+    XTTrelloWrapper *apiWrapper = [XTTrelloWrapper sharedInstance];
+    NSDictionary *boardDict = sender.boardDictionary;
+    //NSLog(@"boardDict; %@", boardDict);
+    //return;
+    NSString *newBoardName = boardDict[@"boardName"];
+    NSString *chosenListName = boardDict[@"listName"];
+    
+    NSLog(@"cardDict: %@", self.cardDict);
+    [apiWrapper moveCard:self.cardDict fromBoardNamed:self.boardName toBoardNamed:newBoardName toListNamed:chosenListName];
+    //[apiWrapper moveCard:self.cardDict toListWithID:listID inBoardNamed:self.boardName];
+    [self delegateRefreshList];
+    
+}
 
 - (IBAction)moveCard:(id)sender
 {
@@ -195,6 +210,46 @@
             [listsMenu addItem:currentItem];
         }
     }
+    
+    if ([[boardsMenu itemArray] count] == 0)
+    {
+        NSArray *boardObjects = [self.delegate boardArray];
+        int itemTag = 0;
+        for (NSDictionary *currentBoard in boardObjects)
+        {
+            NSMenuItem *currentItem = [[NSMenuItem alloc] initWithTitle:currentBoard[@"name"] action:@selector(moveCardToBoard:) keyEquivalent:@""];
+            
+            NSMenu *listsSubmenu = [[NSMenu alloc] initWithTitle:@""];
+            
+            for (NSDictionary *list in currentBoard[@"lists"])
+            {
+                
+                NSMenuItem *currentSubItem = [[NSMenuItem alloc] initWithTitle:list[@"name"] action:@selector(moveCardToBoard:) keyEquivalent:@""];
+                currentSubItem.boardDictionary = @{@"boardName": currentBoard[@"name"], @"listName": list[@"name"]};
+                [listsSubmenu addItem:currentSubItem];
+            }
+            
+            [currentItem setTag:itemTag];
+            itemTag++;
+            [currentItem setSubmenu:listsSubmenu];
+            [boardsMenu addItem:currentItem];
+        }
+    }
+    
+    /*
+    if ([[boardsMenu itemArray] count] == 0)
+    {
+        NSArray *boardObjects = [self.delegate boardNames];
+        int itemTag = 0;
+        for (NSString *currentBoard in boardObjects)
+        {
+            NSMenuItem *currentItem = [[NSMenuItem alloc] initWithTitle:currentBoard action:@selector(moveCardToBoard:) keyEquivalent:@""];
+            [currentItem setTag:itemTag];
+            itemTag++;
+            [boardsMenu addItem:currentItem];
+        }
+    }
+     */
 }
 
 - (void)setCardMember:(id)sender
@@ -301,6 +356,7 @@
 {
     context = [[NSMenu alloc] initWithTitle:@""];
     listsMenu = [[NSMenu alloc] initWithTitle:@""];
+    boardsMenu = [[NSMenu alloc] initWithTitle:@""];
     NSMenuItem *setLabelsMenu = [[NSMenuItem alloc] initWithTitle:@"Set Labels" action:nil keyEquivalent:@""];
     NSMenu *labelsSubmenu = [self colorSubmenu];
     [setLabelsMenu setSubmenu:labelsSubmenu];
@@ -317,6 +373,11 @@
     NSMenuItem *changeListMenu = [[NSMenuItem alloc] initWithTitle:@"Move to List" action:nil keyEquivalent:@""];
     [changeListMenu setSubmenu:listsMenu];
     [context addItem:changeListMenu];
+    
+    NSMenuItem *changeBoardMenu = [[NSMenuItem alloc] initWithTitle:@"Move to Board" action:nil keyEquivalent:@""];
+    [changeBoardMenu setSubmenu:boardsMenu];
+    [context addItem:changeBoardMenu];
+    
     
     NSMenuItem *jumpToCode = [[NSMenuItem alloc] initWithTitle:@"Jump to code..." action:@selector(jumpToCode:) keyEquivalent:@""];
     [context addItem:jumpToCode];

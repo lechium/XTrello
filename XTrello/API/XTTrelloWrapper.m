@@ -213,6 +213,38 @@
     return trelloData;
 }
 
+- (NSDictionary *)moveCard:(NSDictionary *)theCard fromBoardNamed:(NSString *)oldBoardName toBoardNamed:(NSString *)boardName toListNamed:(NSString *)listName
+{
+    NSLog(@"move card: %@ from board: %@ to board: %@ in list: %@", theCard[@"name"], oldBoardName, boardName, listName );
+    NSMutableDictionary *oldBoardDict = [[self boardNamed:oldBoardName] mutableCopy];
+    NSMutableDictionary *newBoardDict = [[self boardNamed:boardName] mutableCopy];
+
+    NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"(SELF.name == %@)", listName];
+    NSDictionary *newList = [[[newBoardDict valueForKey:@"lists"] filteredArrayUsingPredicate:filterPredicate] lastObject];
+    
+  //  NSLog(@"newList: %@", newList);
+    
+    
+    NSMutableArray *cards = [[oldBoardDict valueForKey:@"cards"] mutableCopy];
+    NSMutableArray *newCards = [[newBoardDict valueForKey:@"cards"] mutableCopy];
+    NSInteger cardIndex = [cards indexOfObject:theCard];
+    NSMutableDictionary *updatedCard = [theCard mutableCopy];
+    [updatedCard setObject:newBoardDict[@"id"] forKey:@"idBoard"];
+    [updatedCard setObject:newList[@"id"] forKey:@"idList"];
+    [cards removeObjectAtIndex:cardIndex];
+    [newCards addObject:updatedCard];
+    //[cards replaceObjectAtIndex:cardIndex withObject:updatedCard];
+    [oldBoardDict setObject:cards forKey:@"cards"];
+    [newBoardDict setObject:newCards forKey:@"cards"];
+    [[self.trelloData objectForKey:@"boards"] setObject:oldBoardDict forKey:oldBoardName];
+     [[self.trelloData objectForKey:@"boards"] setObject:newBoardDict forKey:boardName];
+    [self.trelloData writeToFile:[XTModel boardsDataStoreFile] atomically:TRUE];
+    
+    [self moveCardWithID:updatedCard[@"id"] toListWithID:newList[@"id"]  inBoardWithID:newBoardDict[@"id"]];
+    //[self moveCardWithID:theCard[@"id"] toListWithID:listID];
+    return trelloData;
+}
+
 - (NSDictionary *)moveCard:(NSDictionary *)theCard toListWithID:(NSString *)listID inBoardNamed:(NSString *)boardName
 {
     NSMutableDictionary *boardDict = [[self boardNamed:boardName] mutableCopy];
@@ -646,6 +678,21 @@
     }
 }
 
+//actually moves the card to a new board entirely
+
+- (void)moveCardWithID:(NSString *)cardID toListWithID:(NSString *)theList inBoardWithID:(NSString *)boardID
+
+{
+    ///PUT %@/cards/%@/idBoard?key=%@&token=%@value=%@&idList=%@
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    NSString *newURL = [NSString stringWithFormat:@"%@/cards/%@/idBoard?key=%@&token=%@&value=%@&idList=%@", baseURL, cardID, apiKey, sessionToken, boardID, theList];
+    NSLog(@"newURL: %@", newURL);
+    [request setURL:[NSURL URLWithString:newURL]];
+    [request setHTTPMethod:@"PUT"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [self performSynchronousConnectionFromURLRequest:request];
+}
+
 - (void)moveCardWithID:(NSString *)cardID toListWithID:(NSString *)theList
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
@@ -1060,7 +1107,7 @@
             for (NSDictionary *org in orgArray)
             {
                 NSString *orgID = org[@"id"];
-                NSString *displayName = org[@"displayName"];
+             //   NSString *displayName = org[@"displayName"];
                 NSString *boards2 = [NSString stringWithFormat:@"%@/organizations/%@/boards?filter=all&key=%@&token=%@", baseURL,orgID, apiKey, sessionToken];
                // NSLog(@"boards2: %@", boards2);
                 NSArray *jsonBoards2 = (NSArray *)[self dictionaryFromURLString:boards2];
