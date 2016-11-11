@@ -284,10 +284,12 @@ static XTrello *XTrelloSharedPlugin;
         NSMenuItem *boardItem = [[NSMenuItem alloc] initWithTitle:@"Create Board for Current Project..." action:@selector(createBoardForCurrentProject) keyEquivalent:@""];
         [boardItem setTarget:self];
         [trelloMenu addItem:boardItem];
-        
+       
+        /*
         NSMenuItem *testMenuItem = [[NSMenuItem alloc] initWithTitle:@"Test menu item" action:@selector(testTextForGITLogs) keyEquivalent:@""];
         [testMenuItem setTarget:self];
         [trelloMenu addItem:testMenuItem];
+        */
         
         [trelloMenuItem setSubmenu:trelloMenu];
         [[menuItem submenu] addItem:trelloMenuItem];

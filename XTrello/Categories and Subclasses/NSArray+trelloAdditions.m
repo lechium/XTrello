@@ -30,4 +30,23 @@
     return returnString;
 }
 
+- (BOOL)containsString:(NSString *)theString
+{
+    NSInteger idx = [self indexOfObjectPassingTest:^BOOL(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+       
+        if ([obj rangeOfString:theString].location != NSNotFound)
+        {
+            return YES;
+        } else {
+            return NO;
+        }
+        
+    }];
+    
+    if (idx == NSNotFound) return NO;
+    
+    return YES;
+    
+}
+
 @end

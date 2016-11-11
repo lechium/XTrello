@@ -121,7 +121,6 @@ static NSBundle *pluginBundle;
 + (NSString *)todaysEntriesTrelloDescriptionExcludingDescription:(NSString *)desc
 {
     NSArray *descArray = [desc componentsSeparatedByString:@"\n"];
-    NSLog(@"descArray: %@", descArray);
     NSArray *todayArray = [[self logEntries] filteredArrayUsingPredicate:[self todayPredicate]];
     __block NSMutableString *newString = [NSMutableString new];
     if (descArray.count > 0)
@@ -130,11 +129,7 @@ static NSBundle *pluginBundle;
     }
     [todayArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
-       NSLog(@"comment: %@", obj[@"comment"]);
-        
-        NSString *commentCheck = [NSString stringWithFormat:@"- %@", obj[@"comment"]];
-       
-        if (![descArray containsObject:commentCheck])
+        if (![descArray containsString:obj[@"comment"]])
         {
             [newString appendFormat:@"- %@\n", obj[@"comment"]];
         } else {

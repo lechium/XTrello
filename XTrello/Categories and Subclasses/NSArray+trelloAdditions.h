@@ -10,4 +10,6 @@
 
 @interface NSArray (trelloAdditions)
 - (NSString *)labelString;
+- (BOOL)containsString:(NSString *)theString; //will check to see if any object in the array contains
+//even part of a string;
 @end
