@@ -36,6 +36,117 @@ static NSBundle *pluginBundle;
     return [[self applicationSupportFolder] stringByAppendingPathComponent:@"trelloBoards.plist"];
 }
 
+//currently unused, SHOULD get an nsdictionary of commit items.
+
++ (NSArray *)logEntries
+{
+    
+    // git log --pretty="%ad COMMIT_MSG: %s" --since=1.day --date=short
+    /*
+     
+     will yield something that can be parsed easier, has less of a footprint, and less overhead:
+     
+     
+     2016-11-10 - expanded out all of the umbrella categories that were lazily stored in UIView+RecursiveFind into their own individual respective classes
+     2016-11-09 - added predicate category that could potentially help for more complex filtering in the future
+     2016-11-09 - refactored a slew of categories out of NSDate into their own respective files, still need to do the same to UIView+RecursiveFind next
+     
+     
+     
+     */
+    
+    NSArray *commitArray = [XTModel returnFromGITWithArguments:@[@"log", @"--pretty=\"%ad COMMIT_MSG: %s\"",@"--since=1.day", @"--date=short"]];
+    //NSArray *logArray = [XTModel returnFromGITWithArguments:@[@"--no-pager", @"log", @"--date=short"]];
+    NSDateFormatter *tf = [NSDateFormatter new];
+    //EEE, MMM d, ''yy	Wed, July 10, '96
+    //Tue Nov 8 17:50:32 2016
+    //@"[EEE MMM d HH:mm:ss yyyy
+    [tf setDateFormat:@"yyyy-MM-dd"];
+   // return [[logArray componentsJoinedByString:@"\n"] componentsSeparatedByString:@"commit"];
+   // NSArray *commitArray = [[logArray componentsJoinedByString:@"\n"] componentsSeparatedByString:@"commit"];
+    
+    __block NSMutableArray *finalArray = [[NSMutableArray alloc] init];
+    [commitArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        
+        NSMutableDictionary *commitDict = [NSMutableDictionary new];
+        NSArray *items = [[obj stringByReplacingOccurrencesOfString:@"\"" withString:@""] componentsSeparatedByString:@"COMMIT_MSG: "];
+        if ([items count] == 2)
+        {
+            NSString *dateString = [items[0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            NSDate *theDate = [tf dateFromString:dateString];
+            commitDict[@"date"] = theDate;
+            commitDict[@"comment"]  = items[1];
+            [finalArray addObject:commitDict];
+        }
+    }];
+    /*
+    [commitArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        
+        NSMutableDictionary *commitDict = [NSMutableDictionary new];
+        NSMutableArray *itemArray = [[obj componentsSeparatedByString:@"\n"] mutableCopy];
+        [itemArray removeObject:@""];
+        //  NSLog(@"itemArray: %@ count: %lu", itemArray, itemArray.count);
+        if (itemArray.count >= 4)
+        {
+            
+            NSString *dateString = [[[itemArray[2] componentsSeparatedByString:@"Date:"] lastObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            
+            NSDate *theDate = [tf dateFromString:dateString];
+            
+            //  NSLog(@"date string: -%@- date: %@", dateString, theDate);
+            
+            commitDict[@"commit"] = [itemArray[0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            commitDict[@"author"] = [[[itemArray[1] componentsSeparatedByString:@":"] lastObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            commitDict[@"date"] = theDate;
+            commitDict[@"comment"] = [itemArray[3] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            [finalArray addObject:commitDict];
+            
+        }
+        
+    }];
+     */
+    return finalArray;
+}
+
++ (NSPredicate *)todayPredicate
+{
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSDate *today = [NSDate date];
+    NSDateComponents *toDateComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:today];
+    NSDate *beginning = [calendar dateFromComponents:toDateComponents];
+    return [NSPredicate predicateWithFormat:@"date >= %@ && date <= %@", beginning, today];
+}
+
+
++ (NSString *)todaysEntriesTrelloDescriptionExcludingDescription:(NSString *)desc
+{
+    NSArray *descArray = [desc componentsSeparatedByString:@"\n"];
+    NSLog(@"descArray: %@", descArray);
+    NSArray *todayArray = [[self logEntries] filteredArrayUsingPredicate:[self todayPredicate]];
+    __block NSMutableString *newString = [NSMutableString new];
+    if (descArray.count > 0)
+    {
+        [newString appendFormat:@"%@\n",desc];
+    }
+    [todayArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+       NSLog(@"comment: %@", obj[@"comment"]);
+        
+        NSString *commentCheck = [NSString stringWithFormat:@"- %@", obj[@"comment"]];
+       
+        if (![descArray containsObject:commentCheck])
+        {
+            [newString appendFormat:@"- %@\n", obj[@"comment"]];
+        } else {
+            NSLog(@"#### comment already exists!");
+        }
+        
+        
+    }];
+    return newString;
+}
+
+
 + (NSString *)currentGITBranch
 {
     NSString *currentBranch = nil;

@@ -388,6 +388,24 @@
     NSMenuItem *deleteCardItem = [[NSMenuItem alloc] initWithTitle:@"Delete Card..." action:@selector(deleteCard:) keyEquivalent:@""];
     [context addItem:deleteCardItem];
     
+    NSMenuItem *commitHistoryItem = [[NSMenuItem alloc] initWithTitle:@"Set description to todays commit history..." action:@selector(setCardDescriptionToCommitLog:) keyEquivalent:@""];
+    [context addItem:commitHistoryItem];
+    
+    
+}
+
+- (void)setCardDescriptionToCommitLog:(id)sender
+{
+    NSString *currentDesc = self.cardDict[@"desc"];
+    
+    NSString *desc = [XTModel todaysEntriesTrelloDescriptionExcludingDescription:currentDesc];
+    NSLog(@"#### cardDict: %@", self.cardDict);
+    if (desc.length > 0){
+    
+        [[XTTrelloWrapper sharedInstance] setDescription:desc forCardNamed:self.cardDict[@"name"] inBoardNamed:self.boardName];
+    } else {
+        NSLog(@"don't overwrite stuff, nothing new to add");
+    }
 }
 
 - (void)addCard:(id)sender

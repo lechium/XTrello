@@ -194,14 +194,25 @@ static XTrello *XTrelloSharedPlugin;
         [trelloItem setTarget:self.windowController];
         [trelloMenu addItem:trelloItem];
         
-        NSMenuItem *boardItem = [[NSMenuItem alloc] initWithTitle:@"Create Board for Current Project..." action:@selector(createBoardForCurrentProject) keyEquivalent:@""];
+        NSMenuItem *boardItem = [[NSMenuItem alloc] initWithTitle:@"Create Board for Current Project CHANGE..." action:@selector(createBoardForCurrentProject) keyEquivalent:@""];
         [boardItem setTarget:self];
         [trelloMenu addItem:boardItem];
         
+        NSMenuItem *testMenuItem = [[NSMenuItem alloc] initWithTitle:@"Test menu item" action:@selector(testTextForGITLogs) keyEquivalent:@""];
+        [testMenuItem setTarget:self];
+        [trelloMenu addItem:testMenuItem];
+        
+        //logEntries
         [trelloMenuItem setSubmenu:trelloMenu];
         [[menuItem submenu] addItem:trelloMenuItem];
         menuAdded = true;
     }
+}
+
+- (void)testTextForGITLogs
+{
+    NSString *trelloDesc = [XTModel todaysEntriesTrelloDescriptionExcludingDescription:nil];
+    NSLog(@"#### XTRELLO: TODAYS THINGS: %@", trelloDesc );
 }
 
 - (void)delayedSetup
@@ -273,6 +284,10 @@ static XTrello *XTrelloSharedPlugin;
         NSMenuItem *boardItem = [[NSMenuItem alloc] initWithTitle:@"Create Board for Current Project..." action:@selector(createBoardForCurrentProject) keyEquivalent:@""];
         [boardItem setTarget:self];
         [trelloMenu addItem:boardItem];
+        
+        NSMenuItem *testMenuItem = [[NSMenuItem alloc] initWithTitle:@"Test menu item" action:@selector(testTextForGITLogs) keyEquivalent:@""];
+        [testMenuItem setTarget:self];
+        [trelloMenu addItem:testMenuItem];
         
         [trelloMenuItem setSubmenu:trelloMenu];
         [[menuItem submenu] addItem:trelloMenuItem];

@@ -140,7 +140,13 @@
 
 - (NSDictionary *)dictionaryFromURLString:(NSString *)theString
 {
-    id newJSONObject = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:theString]] options:0 error:nil];
+    NSData *theData = [NSData dataWithContentsOfURL:[NSURL URLWithString:theString]];
+    if (theData == nil)
+    {
+        NSLog(@"NIL DATA FOR URL: %@, BAIL", theString);
+        return nil;
+    }
+    id newJSONObject = [NSJSONSerialization JSONObjectWithData:theData options:0 error:nil];
     id returnObject = newJSONObject;
     if ([newJSONObject respondsToSelector:@selector(allKeys)]) //dealing with a dictionary
     {
